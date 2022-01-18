@@ -1,0 +1,14 @@
+tests/output
+__pycache__
+
+# Visual Studio Code
+.vscode
+
+# Python Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/

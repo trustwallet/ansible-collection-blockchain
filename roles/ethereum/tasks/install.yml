@@ -1,0 +1,61 @@
+---
+- name: Populate service facts
+  ansible.builtin.service_facts: {}
+
+- name: Stop service if exists
+  ansible.builtin.systemd:
+    name: "{{ systemd_unit_name }}"
+    state: stopped
+  when: systemd_unit_name in ansible_facts.services
+
+- name: Install repository from PPA
+  ansible.builtin.apt_repository:
+    repo: ppa:ethereum/ethereum
+  when:
+    - ansible_distribution == "Ubuntu"
+
+- name: Install apt package
+  ansible.builtin.apt:
+    pkg: ethereum
+    update_cache: true
+  when:
+    - ansible_distribution == "Ubuntu"
+
+- name: "Create user {{ username }}"
+  ansible.builtin.user:
+    name: "{{ username }}"
+  tags: always
+
+- name: Create geth config dir
+  ansible.builtin.command: "mkdir -p {{ geth_config_dir }}"
+
+- name: Backup geth config if exists
+  ansible.builtin.copy:
+    remote_src: true
+    src: "{{ geth_config_path }}"
+    dest: "{{ geth_config_path }}.orig"
+    owner: "{{ username }}"
+
+- name: Dump geth config
+  ansible.builtin.shell: "{{ geth_bin }} dumpconfig > {{ geth_config_path }}"
+
+- name: Change ownership of config
+  ansible.builtin.file:
+    path: "{{ geth_config_path }}"
+    owner: "{{ username }}"
+  
+- name: Read config file
+  ansible.builtin.command: "cat {{ geth_config_path }}"
+  register: result
+
+- name: Save config toml to fact var
+  set_fact:
+    config: "{{ result.stdout | from_toml }}"
+  
+# - name: Set geth_datadir
+#   set_fact:
+#     config: "{{ config | combine(item, recursive=true) }}"
+#   vars:
+#     new_value: "{ '{{ item.key }}': '{{ item.value }}' }"
+
+

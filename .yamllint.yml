@@ -1,0 +1,56 @@
+---
+rules:
+  braces:
+    forbid: "non-empty"
+  brackets:
+    forbid: "non-empty"
+  colons:
+    max-spaces-after: 1
+    max-spaces-before: 0
+  commas:
+    max-spaces-after: 1
+    max-spaces-before: 0
+    min-spaces-after: 1
+  comments:
+    ignore-shebangs: false
+    min-spaces-from-content: 1
+    require-starting-space: true
+  comments-indentation: "enable"
+  document-end:
+    present: false
+  document-start:
+    present: true
+  empty-lines:
+    max: 1
+    max-end: 0
+    max-start: 0
+  empty-values:
+    forbid-in-block-mappings: true
+    forbid-in-flow-mappings: true
+  hyphens:
+    max-spaces-after: 1
+  indentation:
+    check-multi-line-strings: true
+    indent-sequences: true
+    spaces: 2
+  key-duplicates: "enable"
+  key-ordering: "disable"
+  line-length: "disable"
+  new-line-at-end-of-file: "enable"
+  new-lines:
+    type: "unix"
+  octal-values:
+    forbid-explicit-octal: true
+    forbid-implicit-octal: true
+  quoted-strings:
+    quote-type: "double"
+    required: true
+  trailing-spaces: "enable"
+  truthy:
+    allowed-values:
+      - "true"
+      - "false"
+    check-keys: true
+
+yaml-files:
+  - "*.yml"

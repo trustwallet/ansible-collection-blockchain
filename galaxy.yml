@@ -1,0 +1,18 @@
+namespace: trustwallet
+name: blockchains
+version: 0.1.0
+readme: README.md
+authors:
+  - vorotech
+description: |
+  The Ansible Collection contains Trust Wallet's roles to manage blockchain nodes.
+  Trust Wallet is a most trusted & secure crypto wallet.
+license_file: LICENSE
+tags:
+  - blockchain
+  - ethereum
+dependencies:
+  community.general: '>= 4.2.0'
+repository: https://github.com/trustwallet/ansible-collection-blockchains
+issues: https://github.com/trustwallet/ansible-collection-blockchains/issues
+homepage: https://trustwallet.com

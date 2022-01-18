@@ -1,0 +1,14 @@
+galaxy_info:
+  author: vorotech
+  description: Ansible role to manage Ethereum blockchain node with Geth
+  company: Trust Wallet
+  license: MIT
+  min_ansible_version: 2.10.6
+  platforms:
+  - name: Ubuntu
+    versions:
+    - all
+  galaxy_tags:
+    - ethereum
+    - geth
+dependencies: []

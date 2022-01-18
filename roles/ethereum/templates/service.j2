@@ -1,0 +1,16 @@
+# {{ ansible_managed }}
+
+[Unit]
+Description={{ systemd_unit_description }}
+After=network.target
+
+[Service]
+Type=simple
+User={{ systemd_unit_user }}
+ExecStart={{ systemd_unit_exec_start }}
+Restart=on-failure
+RestartSec=3
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target

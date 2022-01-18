@@ -1,0 +1,27 @@
+---
+name: Linter
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  ansible-lint:
+    name: "ansible-lint"
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: "actions/checkout@v2"
+      - uses: "ansible/ansible-lint-action@master"
+        with:
+          targets: ""
+          args: ""
+  yamllint:
+    name: "yamllint"
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: "actions/checkout@v2"
+      - uses: "actions/setup-python@v2"
+      - run: "pip install yamllint"
+      - run: "yamllint -s ."
