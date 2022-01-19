@@ -1,7 +1,11 @@
 ---
+extends: default
+ignore: |
+  **/lib/
 rules:
   braces:
-    forbid: "non-empty"
+    min-spaces-inside: 0
+    max-spaces-inside: 0
   brackets:
     forbid: "non-empty"
   colons:
@@ -30,7 +34,7 @@ rules:
   hyphens:
     max-spaces-after: 1
   indentation:
-    check-multi-line-strings: true
+    check-multi-line-strings: false
     indent-sequences: true
     spaces: 2
   key-duplicates: "enable"
@@ -44,13 +48,13 @@ rules:
     forbid-implicit-octal: true
   quoted-strings:
     quote-type: "double"
-    required: true
+    required: false
   trailing-spaces: "enable"
   truthy:
     allowed-values:
       - "true"
       - "false"
-    check-keys: true
+    check-keys: false
 
 yaml-files:
   - "*.yml"

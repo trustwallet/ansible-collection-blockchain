@@ -6,7 +6,7 @@ After=network.target
 
 [Service]
 Type=simple
-User={{ systemd_unit_user }}
+User={{ username }}
 ExecStart={{ systemd_unit_exec_start }}
 Restart=on-failure
 RestartSec=3

@@ -9,8 +9,6 @@ geth_config_path: "{{ geth_config_dir }}/config.toml"
 systemd_unit_name: gethd.service
 systemd_unit_description: Ethereum Node (geth) Daemon
 systemd_unit_exec_start: "{{ geth_bin }} --config {{ geth_config_path }} {{ geth_extra_flags }}"
-systemd_unit_user: "{{ username }}"
-
 
 ##
 ## Ethereum Options
@@ -22,7 +20,6 @@ geth_datadir: "{{ home_dir }}/.ethereum"
 # snap: Same functionality as fast, but with a faster algorithm.
 # light: Downloads all block headers, block data, and verifies some randomly.
 geth_syncmode: snap
-
 
 ##
 ## API AND CONSOLE OPTIONS

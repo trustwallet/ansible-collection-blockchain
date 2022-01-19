@@ -1,0 +1,48 @@
+---
+- name: Check config file
+  ansible.builtin.stat:
+    path: "{{ geth_config_path }}"
+  register: config_stat
+
+- name: Backup geth config if exists
+  ansible.builtin.copy:
+    remote_src: true
+    src: "{{ geth_config_path }}"
+    dest: "{{ geth_config_path }}.orig"
+    owner: "{{ username }}"
+    mode: preserve
+  when: config_stat.stat.exists
+
+- name: Dump geth config
+  ansible.builtin.shell: "{{ geth_bin }} dumpconfig > {{ geth_config_path }}"
+  args:
+    creates: "{{ geth_config_path }}"
+
+- name: Change ownership of config
+  ansible.builtin.file:
+    path: "{{ geth_config_path }}"
+    owner: "{{ username }}"
+
+- name: Update config variables # noqa risky-file-permissions
+  community.general.ini_file:
+    path: "{{ geth_config_path }}"
+    section: "{{ item.section }}"
+    option: "{{ item.option }}"
+    value: "{{ item.value }}"
+  loop:
+    - {section: Eth, option: SyncMode, value: "\"{{ geth_syncmode }}\""}
+
+    - {section: Node, option: DataDir, value: "\"{{ geth_datadir }}\""}
+    - {section: Node, option: HTTPHost, value: "\"{{ geth_http_addr }}\""}
+    - {section: Node, option: HTTPPort, value: "{{ geth_http_port }}"}
+    - {section: Node, option: HTTPVirtualHosts, value: "[\"{{ geth_http_vhosts | join('\", \"') }}\"]"}
+
+    - {section: Metrics, option: HTTP, value: "\"{{ geth_metrics_addr }}\""}
+    - {section: Metrics, option: Port, value: "{{ geth_metrics_port }}"}
+
+- name: Enable metrics with flag
+  set_fact:
+    geth_extra_flags: "--metrics {{ geth_extra_flags }}"
+  when:
+    - geth_metrics | bool
+    - geth_extra_flags is not search("--metrics")

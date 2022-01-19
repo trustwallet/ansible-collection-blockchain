@@ -1,0 +1,20 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: ec2
+lint: |
+  set -e
+  yamllint .
+  ansible-lint
+platforms:
+  - name: instance
+    image: ami-0fd19782996d81f2d
+    instance_type: t3.medium
+    vpc_subnet_id: ${VPC_SUBNET_ID}
+    tags:
+      Name: molecule-ethereum
+provisioner:
+  name: ansible
+verifier:
+  name: testinfra

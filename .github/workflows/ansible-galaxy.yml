@@ -3,8 +3,10 @@ name: Ansible Galaxy
 
 on:
   push:
-    branches: [ main ]
-    paths: [ "galaxy.yml" ]
+    branches:
+      - main
+    paths:
+      - galaxy.yml
 
 jobs:
   ansible-galaxy:

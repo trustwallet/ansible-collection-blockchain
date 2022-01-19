@@ -51,7 +51,7 @@ The general rule here, if it make sense to have the chosen parameter appear in `
 ```yml
 - hosts: servers
   roles:
-    - { role: trustwallet.blockchains.ethereum, geth_datadir: /mnt/data }
+    - { role: trustwallet.blockchains.ethereum, become: yes, geth_datadir: /mnt/data }
 ```
 
 _When Ansible Role targeting an AWS EC2 insance, it might be a good idea to
