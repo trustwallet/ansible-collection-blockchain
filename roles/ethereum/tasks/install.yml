@@ -4,9 +4,17 @@
 
 - name: "Stop service if exists"
   ansible.builtin.systemd:
-    name: "{{ systemd_unit_name }}"
+    name: "{{ daemon_name }}"
     state: stopped
-  when: systemd_unit_name in ansible_facts.services
+  when: daemon_name~'.service' in ansible_facts.services
+
+- name: "Create user {{ username }}"
+  ansible.builtin.user:
+    name: "{{ username }}"
+
+##
+## Insall ethereum (geth) binary
+##
 
 - name: "Install repository from PPA"
   ansible.builtin.apt_repository:
@@ -20,14 +28,3 @@
     update_cache: true
   when:
     - ansible_distribution == "Ubuntu"
-
-- name: "Create user {{ username }}"
-  ansible.builtin.user:
-    name: "{{ username }}"
-
-- name: "Create geth config dir"
-  ansible.builtin.file:
-    dest: "{{ geth_config_dir }}"
-    owner: "{{ username }}"
-    state: directory
-    mode: "744"

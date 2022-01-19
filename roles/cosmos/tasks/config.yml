@@ -1,0 +1,4 @@
+---
+- name: "Set config"
+  set_fact:
+    foo: bar

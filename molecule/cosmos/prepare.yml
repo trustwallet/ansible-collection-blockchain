@@ -1,0 +1,15 @@
+---
+- name: Prepare
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: "Make sure python3 is installed"
+      package:
+        name: python3
+        state: present
+      become: true
+
+    - name: "Check COSMOS_CHAIN_NAME env var is set"
+      assert:
+        that:
+          - lookup('env', 'COSMOS_CHAIN_NAME') | default("") | length > 0

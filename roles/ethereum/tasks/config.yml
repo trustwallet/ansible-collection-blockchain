@@ -1,31 +1,38 @@
 ---
-- name: Check config file
+- name: "Create data dir"
+  ansible.builtin.file:
+    dest: "{{ chain_data_dir }}"
+    owner: "{{ username }}"
+    state: directory
+    mode: "744"
+
+- name: "Check config file"
   ansible.builtin.stat:
-    path: "{{ geth_config_path }}"
+    path: "{{ chain_config_path }}"
   register: config_stat
 
-- name: Backup geth config if exists
+- name: "Backup geth config if exists"
   ansible.builtin.copy:
     remote_src: true
-    src: "{{ geth_config_path }}"
-    dest: "{{ geth_config_path }}.orig"
+    src: "{{ chain_config_path }}"
+    dest: "{{ chain_config_path }}.orig"
     owner: "{{ username }}"
     mode: preserve
   when: config_stat.stat.exists
 
-- name: Dump geth config
-  ansible.builtin.shell: "{{ geth_bin }} dumpconfig > {{ geth_config_path }}"
+- name: "Dump geth config"
+  ansible.builtin.shell: "{{ chain_bin }} dumpconfig > {{ chain_config_path }}"
   args:
-    creates: "{{ geth_config_path }}"
+    creates: "{{ chain_config_path }}"
 
-- name: Change ownership of config
+- name: "Change ownership of config"
   ansible.builtin.file:
-    path: "{{ geth_config_path }}"
+    path: "{{ chain_config_path }}"
     owner: "{{ username }}"
 
-- name: Update config variables # noqa risky-file-permissions
+- name: "Update config variables" # noqa risky-file-permissions
   community.general.ini_file:
-    path: "{{ geth_config_path }}"
+    path: "{{ chain_config_path }}"
     section: "{{ item.section }}"
     option: "{{ item.option }}"
     value: "{{ item.value }}"

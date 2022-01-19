@@ -26,7 +26,7 @@ It's recommended to develop inside [Virtual environment](https://virtualenv.pypa
 ```shell
 virtualenv -p python3 venv
 source venv/bin/activate
-pip install -r ./molecule/requirements
+pip install -r molecule/requirements.txt
 ```
 
 Provide AWS credentials to allow Molecule provision ephemeral EC2 instance.

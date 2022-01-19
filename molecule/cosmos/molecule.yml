@@ -19,7 +19,7 @@ provisioner:
 verifier:
   name: testinfra
 scenario:
-  name: ethereum
+  name: cosmos
   create_sequence:
     - create
     - prepare

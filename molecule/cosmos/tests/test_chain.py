@@ -1,0 +1,24 @@
+import os
+import pytest
+import testinfra.utils.ansible_runner
+
+from ansible.template import Templar
+from ansible.parsing.dataloader import DataLoader
+
+testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
+    os.environ['MOLECULE_INVENTORY_FILE']).get_hosts('all')
+chain_name = os.environ['COSMOS_CHAIN_NAME']
+
+@pytest.fixture(scope='module')
+def ansible_vars(host):
+    defaults_files = "file=../../roles/cosmos/defaults/main.yml"
+    vars_files = "file=../../roles/cosmos/vars/%s.yml" % chain_name
+
+    host.ansible("setup")
+    host.ansible("include_vars", defaults_files)
+    host.ansible("include_vars", vars_files)
+    all_vars = host.ansible.get_variables()
+    all_vars["ansible_play_host_all"] = testinfra_hosts
+    templar = Templar(loader=DataLoader(), variables=all_vars)
+    
+    return templar.template(all_vars, fail_on_undefined=False)

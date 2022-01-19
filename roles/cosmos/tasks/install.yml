@@ -1,0 +1,17 @@
+---
+- name: "Populate service facts"
+  ansible.builtin.service_facts: {}
+
+- name: "Stop service if exists"
+  ansible.builtin.systemd:
+    name: "{{ cosmovisor_daemon_name }}"
+    state: stopped
+  when: cosmovisor_daemon_name~'.service' in ansible_facts.services
+
+- name: "Create user {{ username }}"
+  ansible.builtin.user:
+    name: "{{ username }}"
+
+##
+## Insall cosmos-sdk based chain
+##
