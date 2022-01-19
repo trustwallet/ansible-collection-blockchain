@@ -39,10 +39,4 @@
 
     - {section: Metrics, option: HTTP, value: "\"{{ geth_metrics_addr }}\""}
     - {section: Metrics, option: Port, value: "{{ geth_metrics_port }}"}
-
-- name: Enable metrics with flag
-  set_fact:
-    geth_extra_flags: "--metrics {{ geth_extra_flags }}"
-  when:
-    - geth_metrics | bool
-    - geth_extra_flags is not search("--metrics")
+    - {section: Metrics, option: Enabled, value: "{{ geth_metrics | string | lower }}"}
