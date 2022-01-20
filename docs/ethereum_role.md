@@ -20,16 +20,10 @@ The execution command is the following:
 
 The general rule here, if it make sense to have the chosen parameter appear in `config.toml` for better clarity, then submit a pull request to add the flag to `defaults/main.yml`; otherwise pass the additional configuration via `chain_bin_flags`
 
-### Defaults
+See the deaults/main.yml to find role defaults.
 
-| Parameter | Choices/Defaults | Comments | 
-|---|---|---|
-| username | `geth` | Username to run a SystemD unit as |
-| home_dir | `/home/{{ username }}` | Base directory for `chain_data_dir` |
-| chain_bin | `geth` | The geth binary available at the PATH |
-| chain_bin_flags | `""` | The geth command-line flags |
-| chain_data_dir | `{{ home_dir }}/.ethereum` | Data directory for the config, databases and keystore |
-| chain_config_file | `config.toml` | The geth config file name |
+One of the parameters that can be override is `chain_data_dir`, is the 
+data directory for the config, databases and keystore.
 
 ### Geth Variables
 
@@ -50,8 +44,21 @@ The general rule here, if it make sense to have the chosen parameter appear in `
 ```yml
 - hosts: servers
   roles:
-    - { role: trustwallet.blockchains.ethereum, become: yes, geth_datadir: /mnt/data }
+    - role: trustwallet.blockchains.ethereum
+      become: yes
+      geth_datadir: /mnt/data
+
+# or
+- hosts: servers
+  taks:
+    - import_role:
+        name: trustwallet.blockchains.ethereum
+      vars:
+        ansible_become: yes
+        geth_datadir: /mnt/data
 ```
+
+
 
 _When Ansible Role targeting an AWS EC2 insance, it might be a good idea to
 change the `geth_datadir` to target directory at attached and mounted 

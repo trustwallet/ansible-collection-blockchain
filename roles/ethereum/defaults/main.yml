@@ -1,15 +1,33 @@
 ---
+# <username> is the non-root user under which daemon will operate
 username: geth
+
+# <home_dir> is a user home dir
 home_dir: "/home/{{ username }}"
 
+# <chain_name> defines the chain to init
 chain_name: ethereum
-chain_bin: geth
-chain_bin_flags: ""
-chain_data_dir: "{{ home_dir }}/.ethereum"
-chain_config_file: "config.toml"
-chain_config_path: "{{ chain_data_dir }}/{{ chain_config_file }}"
-pretty_name: Ethereum
 
+# <chain_name> is the chain executable
+chain_bin: geth
+
+# <chain_bin_flags> is an optinal extra bin flags
+# e.g. chain_bin_flags: ""
+
+# <chain_data_dir> is the parametr which allows to override chain data location
+chain_data_dir: "{{ home_dir }}/.ethereum"
+
+# <chain_config_file> is the dumped config file name
+chain_config_file: "config.toml"
+
+# <chain_config_path> is the chain config path
+chain_config_path: "{{ chain_data_dir }}/{{ chain_config_file }}"
+
+# <daemon_name> is the name of the SystemD service file
 daemon_name: gethd
-daemon_description: "Ethereum (geth) Chain Daemon"
+
+# <daemon_description> is the SystemD unit description
+daemon_description: Ethereum Chain Daemon
+
+# <daemon_exec_start> is the SystemD ExecStart command
 daemon_exec_start: "{{ chain_bin }} --config {{ chain_config_path }} {{ chain_bin_flags }}"
