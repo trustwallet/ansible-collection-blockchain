@@ -1,4 +1,3 @@
-
 ---
 chain_name: terra
 chain_bin_flags: "--x-crisis-skip-assert-invariants"

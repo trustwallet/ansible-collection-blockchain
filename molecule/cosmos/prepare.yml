@@ -12,4 +12,3 @@
     - name: "Check COSMOS_CHAIN_NAME env var is set"
       ansible.builtin.assert:
         that: lookup('env', 'COSMOS_CHAIN_NAME') | default("") | length > 0
-          

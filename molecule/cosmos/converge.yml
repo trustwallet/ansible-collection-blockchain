@@ -8,3 +8,4 @@
       vars:
         ansible_become: true
         chain_name: "{{ lookup('env', 'COSMOS_CHAIN_NAME') }}"
+        # quicksync_force: true

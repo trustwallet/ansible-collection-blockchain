@@ -2,7 +2,7 @@
 - name: "Set chain configs"
   set_fact:
     chain_config_path: "{{ chain_data_dir }}/config/config.toml"
-    chain_config_app_path: "{{ chain_data_dir }}/config/config.toml"
+    chain_config_app_path: "{{ chain_data_dir }}/config/app.toml"
 
 - name: "Update persistent peers" # noqa risky-file-permissions
   community.general.ini_file:
@@ -30,7 +30,7 @@
     - {section: "", option: pruning-keep-every, value: "\"{{ chain_pruning_keep_every }}\""}
     - {section: "", option: pruning-interval, value: "\"{{ chain_pruning_interval }}\""}
 
-- name: "Update indexer"
+- name: "Update indexer" # noqa risky-file-permissions
   community.general.ini_file:
     path: "{{ chain_config_path }}"
     section: "tx_index"
@@ -38,7 +38,7 @@
     value: "\"kv\""
   when: chain_pruning != 'everything'
 
-- name: "Update indexer (if pruning is everyting)"
+- name: "Update indexer (if pruning is everyting)" # noqa risky-file-permissions
   community.general.ini_file:
     path: "{{ chain_config_path }}"
     section: "tx_index"

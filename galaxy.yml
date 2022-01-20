@@ -13,7 +13,7 @@ tags:
   - blockchain
   - ethereum
 dependencies:
-  community.general: ">= 4.2.0"
+  community.general: ">=4.2.0"
 repository: https://github.com/trustwallet/ansible-collection-blockchains
 issues: https://github.com/trustwallet/ansible-collection-blockchains/issues
 homepage: https://trustwallet.com

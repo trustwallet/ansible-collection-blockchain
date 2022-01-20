@@ -6,30 +6,32 @@
 # https://stackoverflow.com/a/56379678/166473
 - name: "Install acl package"
   ansible.builtin.apt:
-    update_cache: yes
+    update_cache: true
     pkg: acl
 
 - name: "Init {{ chain_name }} chain"
-  ansible.builtin.shell: "{{ chain_bin }} init {{ chain_moniker }} --home={{ chain_data_dir }} --chain-id={{ chain_id }}"
+  ansible.builtin.command: "{{ chain_bin }} init {{ chain_moniker }} --home={{ chain_data_dir }} --chain-id={{ chain_id }}"
   args:
     creates: "{{ chain_data_dir }}/config/genesis.json"
   become: true
   become_user: "{{ username }}"
   register: init_result
 
-- name: "Download the genesis file (instead default)"
+- name: "Download the genesis file (instead default)" # noqa no-handler
   ansible.builtin.get_url:
     url: "{{ chain_genesis_url }}"
     dest: "{{ chain_data_dir }}/config/genesis.json"
     owner: "{{ username }}"
     force: true
-    mode: 0640
+    mode: "640"
   when: init_result.changed
 
-- name: "Download addrbook file"
+- name: "Download addrbook file" # noqa no-handler
   ansible.builtin.get_url:
     url: "{{ chain_addrbook_url }}"
     owner: "{{ username }}"
     dest: "{{ chain_data_dir }}/config/addrbook.json"
-    mode: 0640
-  when: chain_addrbook_url is defined
+    mode: "640"
+  when:
+    - init_result.changed
+    - chain_addrbook_url is defined

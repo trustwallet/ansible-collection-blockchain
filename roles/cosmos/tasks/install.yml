@@ -16,21 +16,21 @@
       ansible.builtin.unarchive:
         src: "{{ chain_bin_url }}"
         dest: "{{ bin_dir }}"
-        mode: 755
-        remote_src: yes
+        mode: "755"
+        remote_src: true
       when: chain_bin_url is match('\.tar\.gz$') # .tar.gz
 
     - name: "Download chain binary"
       ansible.builtin.get_url:
         url: "{{ chain_bin_url }}"
         dest: "{{ bin_dir }}/{{ chain_bin }}"
-        mode: 0755
+        mode: "755"
       when: not chain_bin_url is match('\/[^.]+$') # no extension
 
   when: chain_bin_url is defined
 
 - name: "Install cosmovisor"
-  ansible.builtin.shell: "go install github.com/cosmos/cosmos-sdk/cosmovisor/cmd/cosmovisor@{{ cosmovisor_version }}"
+  ansible.builtin.command: "go install github.com/cosmos/cosmos-sdk/cosmovisor/cmd/cosmovisor@{{ cosmovisor_version }}"
   args:
     creates: "{{ bin_dir }}/cosmovisor"
   environment:
@@ -45,15 +45,7 @@
     mode: "744"
   loop:
     - "{{ cosmovisor_daemon_home }}/cosmovisor/genesis/bin"
-    - "{{ cosmovisor_daemon_home }}/cosmovisor/current"
     - "{{ cosmovisor_daemon_home }}/cosmovisor/upgrades"
-
-- name: "Create current upgrade plan"
-  ansible.builtin.copy:
-    content: "{{ cosmovisor_upgrade_plan | to_nice_json }}"
-    dest: "{{ cosmovisor_daemon_home }}/cosmovisor/current/upgrade-info.json"
-    owner: "{{ username }}"
-    mode: 0644
 
 - name: "Copy chain binary to cosmovisor home dir"
   ansible.builtin.copy:

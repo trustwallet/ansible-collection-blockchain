@@ -5,22 +5,60 @@
       ansible.builtin.apt:
         update_cache: true
         pkg:
-          - liblz4-tool
+          - aria2
           - jq
-    
-    - name: "Get download url"
+          - liblz4-tool
+
+    - name: "Get download target" # noqa command-instead-of-module
       ansible.builtin.shell: "curl https://quicksync.io/{{ chain_name }}.json \
-          | jq -r '.[]|select(.file==\"{{ chain_id }}-{{ quicksync_mode }}\")|select (.mirror==\"{{ quicksync_mirror }}\")|.url'"
-      register: quicksync_url_result
+          | jq -r '.[]|select(.file==\"{{ chain_id }}-{{ quicksync_mode }}\")|select (.mirror==\"{{ quicksync_mirror }}\")'"
+      register: quicksync_target_result
+
+    - name: "Set quicksync facts"
+      set_fact:
+        quicksync_target: "{{ quicksync_target_result.stdout | from_json }}"
+
+    - name: "Ensure download dir exists"
+      ansible.builtin.file:
+        dest: "{{ quicksync_donwload_dir }}"
+        state: directory
+        mode: "744"
+
+    - name: "Download chain data archive"
+      ansible.builtin.shell: "aria2c --continue -x5 {{ quicksync_target.url }} > aria.log"
+      args:
+        chdir: "{{ quicksync_donwload_dir }}"
+      async: 72000
+      poll: 10
+
+    - name: "Download checksum file"
+      ansible.builtin.get_url:
+        url: "{{ quicksync_target.url }}.checksum"
+        dest: "{{ quicksync_donwload_dir }}"
+
+    - name: "Copy checksum tool"
+      ansible.builtin.copy:
+        src: checksum.sh
+        dest: "{{ quicksync_donwload_dir }}"
+        mode: "775"
+
+    - name: "Checksum downloaded archive"
+      ansible.builtin.command: "./checksum.sh {{ quicksync_target.filename }}"
+      args:
+        chdir: "{{ quicksync_donwload_dir }}"
+
+    - name: "Stop service (if running)"
+      ansible.builtin.systemd:
+        name: "{{ cosmovisor_daemon_name }}"
+        state: stopped
 
     - name: "Delete data dir"
       ansible.builtin.file:
         path: "{{ chain_data_dir }}/data"
         state: absent
 
-    - name: "Download chain data"
-      ansible.builtin.shell: >
-        wget -O - {{ quicksync_url_result.stdout }} | lz4 -d | tar -xvf -
+    - name: "Extract chain data" # noqa command-instead-of-module
+      ansible.builtin.command: "tar -I lz4 -xf {{ quicksync_donwload_dir }}/{{ quicksync_target.filename }}"
       args:
         chdir: "{{ chain_data_dir }}"
       async: 72000
@@ -28,23 +66,7 @@
       become: true
       become_user: "{{ username }}"
 
-    # - name: "Update data files ownership"
-    #   ansible.builtin.file:
-    #     dest: "{{ chain_data_dir }}/data"
-    #     owner: "{{ username }}"
-    #     group: "{{ username }}"
-    #     mode: 0644
-    #     recurse: true
-
-    # - name: "Update data dir ownership"
-    #   ansible.builtin.file:
-    #     dest: "{{ chain_data_dir }}/data"
-    #     owner: "{{ username }}"
-    #     group: "{{ username }}"
-    #     mode: 0775
-
   when:
     - init_result.changed or quicksync_force
-    - quicksync_available | bool
+    - quicksync_available
     - quicksync_mode != "none"
-

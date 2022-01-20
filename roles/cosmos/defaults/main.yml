@@ -43,7 +43,7 @@ chain_specific_config: false
 
 # <chain_state_pruning> defines the pruning strategy.
 # Avaiable options are default, nothing, everything, custom.
-chain_pruning: default 
+chain_pruning: default
 
 # <chain_pruning_keep_recent> defines number of last states to keep (e.g. 100).
 # Only applied when chain_pruning is custom.
@@ -75,13 +75,13 @@ cosmovisor_daemon_poll_interval: 300
 
 # <cosmovisor_unsafe_skip_backup>, if true, upgrades directly without performing a backup;
 # otherwise backs up the data before trying the upgrade.
-cosmovisor_unsafe_skip_backup: false
+cosmovisor_unsafe_skip_backup: true
 
 # <cosmovisor_daemon_preupgrade_max_retries> is the maximum number of times to call pre-upgrade
 # in the application after exit status of 31. After the maximum number of retries, cosmovisor fails the upgrade.
 cosmovisor_daemon_preupgrade_max_retries: 0
 
-# <cosmovisor_version> to install. Chains that use Cosmos-SDK `v0.44.3` 
+# <cosmovisor_version> to install. Chains that use Cosmos-SDK `v0.44.3`
 # or earlier and want to use auto-download feature MUST use Cosmovisor `v0.1.0`
 cosmovisor_version: latest
 
@@ -98,9 +98,15 @@ quicksync_mode: pruned
 
 # <quicksync_mirror> selects the regional mirror.
 # Avaiable options are Netherlands, Singapore, SanFrancisco
-quicksync_mirror: SanFrancisco
+quicksync_mirror: Netherlands
 
 # <quicksync_force> forces the chain data download step.
 # Warning, the content of the data dir will be wiped.
 # By default chain data will be downloaded only after chain init.
 quicksync_force: false
+
+# <quicksync_donwload_dir> is the temporary dir to keep downloaded file.
+# The aria2c package is utilized to speed up download process,
+# but it requires double size to first download and then unpack data archive.
+# In cloud environment the download dir often points to temporary mounted drive.
+quicksync_donwload_dir: /tmp/quicksync

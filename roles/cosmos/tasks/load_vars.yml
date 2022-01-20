@@ -11,10 +11,6 @@
       - 200
   register: metadata
 
-# - name: "Print chain metadata"
-#   debug:
-#     var: metadata.json
-
 - name: "Set role facts"
   set_fact:
     chain_bin_flags: "{{ chain_bin_flags | default('') }}"
@@ -26,4 +22,3 @@
     chain_peers: "{{ metadata.json.peers.persistent_peers | to_cosmos_peers }}"
     cosmovisor_daemon_name: "{{ metadata.json.daemon_name }}"
     cosmovisor_daemon_home: "{{ cosmovisor_daemon_home | default(metadata.json.node_home | replace('$HOME', home_dir) ) }}"
-    cosmovisor_upgrade_plan: "{{ metadata.json.codebase }}"
