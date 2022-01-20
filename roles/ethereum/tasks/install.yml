@@ -1,20 +1,13 @@
 ---
-- name: "Populate service facts"
-  ansible.builtin.service_facts: {}
-
-- name: "Stop service if exists"
-  ansible.builtin.systemd:
-    name: "{{ daemon_name }}"
-    state: stopped
-  when: daemon_name~'.service' in ansible_facts.services
-
 - name: "Create user {{ username }}"
   ansible.builtin.user:
     name: "{{ username }}"
 
-##
-## Insall ethereum (geth) binary
-##
+- name: "Create systemd service file"
+  ansible.builtin.template:
+    src: templates/service.j2
+    dest: "/etc/systemd/system/{{ daemon_name }}.service"
+    mode: "644"
 
 - name: "Install repository from PPA"
   ansible.builtin.apt_repository:
