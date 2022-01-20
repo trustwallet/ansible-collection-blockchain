@@ -1,4 +1,50 @@
 ---
-- name: "Set config"
+- name: "Set chain configs"
   set_fact:
-    foo: bar
+    chain_config_path: "{{ chain_data_dir }}/config/config.toml"
+    chain_config_app_path: "{{ chain_data_dir }}/config/config.toml"
+
+- name: "Update persistent peers" # noqa risky-file-permissions
+  community.general.ini_file:
+    path: "{{ chain_config_path }}"
+    section: "p2p"
+    option: "persistent_peers"
+    value: "\"{{ chain_peers }}\""
+
+- name: "Update minimum gas price" # noqa risky-file-permissions
+  community.general.ini_file:
+    path: "{{ chain_config_app_path }}"
+    section: ""
+    option: "minimum-gas-prices"
+    value: "\"{{ chain_minimum_gas_prices }}\""
+
+- name: "Update pruning strategy" # noqa risky-file-permissions
+  community.general.ini_file:
+    path: "{{ chain_config_app_path }}"
+    section: "{{ item.section }}"
+    option: "{{ item.option }}"
+    value: "{{ item.value }}"
+  loop:
+    - {section: "", option: pruning, value: "\"{{ chain_pruning }}\""}
+    - {section: "", option: pruning-keep-recen, value: "\"{{ chain_pruning_keep_recent }}\""}
+    - {section: "", option: pruning-keep-every, value: "\"{{ chain_pruning_keep_every }}\""}
+    - {section: "", option: pruning-interval, value: "\"{{ chain_pruning_interval }}\""}
+
+- name: "Update indexer"
+  community.general.ini_file:
+    path: "{{ chain_config_path }}"
+    section: "tx_index"
+    option: "indexer"
+    value: "\"kv\""
+  when: chain_pruning != 'everything'
+
+- name: "Update indexer (if pruning is everyting)"
+  community.general.ini_file:
+    path: "{{ chain_config_path }}"
+    section: "tx_index"
+    option: "indexer"
+    value: "\"null\""
+  when: chain_pruning == 'everything'
+
+- include_tasks: "config_{{ chain_name }}.yml"
+  when: chain_specific_config

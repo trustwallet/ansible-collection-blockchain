@@ -2,3 +2,63 @@
 - name: "Create user {{ username }}"
   ansible.builtin.user:
     name: "{{ username }}"
+
+- name: "Create systemd service file"
+  ansible.builtin.template:
+    src: templates/service.j2
+    dest: "/etc/systemd/system/{{ cosmovisor_daemon_name }}.service"
+    mode: "644"
+
+- name: "Install chain binary"
+  block:
+
+    - name: "Unarchive chain binary"
+      ansible.builtin.unarchive:
+        src: "{{ chain_bin_url }}"
+        dest: "{{ bin_dir }}"
+        mode: 755
+        remote_src: yes
+      when: chain_bin_url is match('\.tar\.gz$') # .tar.gz
+
+    - name: "Download chain binary"
+      ansible.builtin.get_url:
+        url: "{{ chain_bin_url }}"
+        dest: "{{ bin_dir }}/{{ chain_bin }}"
+        mode: 0755
+      when: not chain_bin_url is match('\/[^.]+$') # no extension
+
+  when: chain_bin_url is defined
+
+- name: "Install cosmovisor"
+  ansible.builtin.shell: "go install github.com/cosmos/cosmos-sdk/cosmovisor/cmd/cosmovisor@{{ cosmovisor_version }}"
+  args:
+    creates: "{{ bin_dir }}/cosmovisor"
+  environment:
+    PATH: "{{ ansible_env.PATH }}:/usr/local/go/bin"
+    GOBIN: "{{ bin_dir }}"
+
+- name: "Create cosmovisor folders"
+  ansible.builtin.file:
+    dest: "{{ item }}"
+    owner: "{{ username }}"
+    state: directory
+    mode: "744"
+  loop:
+    - "{{ cosmovisor_daemon_home }}/cosmovisor/genesis/bin"
+    - "{{ cosmovisor_daemon_home }}/cosmovisor/current"
+    - "{{ cosmovisor_daemon_home }}/cosmovisor/upgrades"
+
+- name: "Create current upgrade plan"
+  ansible.builtin.copy:
+    content: "{{ cosmovisor_upgrade_plan | to_nice_json }}"
+    dest: "{{ cosmovisor_daemon_home }}/cosmovisor/current/upgrade-info.json"
+    owner: "{{ username }}"
+    mode: 0644
+
+- name: "Copy chain binary to cosmovisor home dir"
+  ansible.builtin.copy:
+    remote_src: true
+    src: "{{ bin_dir }}/{{ chain_bin }}"
+    dest: "{{ cosmovisor_daemon_home }}/cosmovisor/genesis/bin/{{ chain_bin }}"
+    owner: "{{ username }}"
+    mode: preserve

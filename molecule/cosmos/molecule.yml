@@ -12,8 +12,13 @@ platforms:
     image: ami-0fd19782996d81f2d
     instance_type: t3.medium
     vpc_subnet_id: ${VPC_SUBNET_ID}
+    volumes:
+      - device_name: /dev/sdf
+        ebs:
+          volume_size: 40 
+          delete_on_termination: true
     tags:
-      Name: molecule-ethereum
+      Name: molecule-cosmos
 provisioner:
   name: ansible
 verifier:

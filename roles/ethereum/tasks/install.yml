@@ -21,3 +21,10 @@
     update_cache: true
   when:
     - ansible_distribution == "Ubuntu"
+
+- name: "Create data dir"
+  ansible.builtin.file:
+    dest: "{{ chain_data_dir }}"
+    owner: "{{ username }}"
+    state: directory
+    mode: "744"

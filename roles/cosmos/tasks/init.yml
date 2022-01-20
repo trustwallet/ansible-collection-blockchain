@@ -1,0 +1,35 @@
+---
+- name: "Save chan-id as {{ chain_id }} in config"
+  ansible.builtin.command: "{{ chain_bin }} config chain-id {{ chain_id }}"
+  changed_when: false
+
+# https://stackoverflow.com/a/56379678/166473
+- name: "Install acl package"
+  ansible.builtin.apt:
+    update_cache: yes
+    pkg: acl
+
+- name: "Init {{ chain_name }} chain"
+  ansible.builtin.shell: "{{ chain_bin }} init {{ chain_moniker }} --home={{ chain_data_dir }} --chain-id={{ chain_id }}"
+  args:
+    creates: "{{ chain_data_dir }}/config/genesis.json"
+  become: true
+  become_user: "{{ username }}"
+  register: init_result
+
+- name: "Download the genesis file (instead default)"
+  ansible.builtin.get_url:
+    url: "{{ chain_genesis_url }}"
+    dest: "{{ chain_data_dir }}/config/genesis.json"
+    owner: "{{ username }}"
+    force: true
+    mode: 0640
+  when: init_result.changed
+
+- name: "Download addrbook file"
+  ansible.builtin.get_url:
+    url: "{{ chain_addrbook_url }}"
+    owner: "{{ username }}"
+    dest: "{{ chain_data_dir }}/config/addrbook.json"
+    mode: 0640
+  when: chain_addrbook_url is defined

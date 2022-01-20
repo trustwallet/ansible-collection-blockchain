@@ -7,18 +7,19 @@ After=network.target
 [Service]
 Type=simple
 User={{ username }}
-ExecStart=$(which cosmovisor) start
+ExecStart={{ bin_dir }}/cosmovisor start --home {{ chain_data_dir }} {{ chain_bin_flags }}
 Restart=on-failure
 RestartSec=3
 LimitNOFILE=4096
 
-Environment="DAEMON_NAME={{ cosmovisor_daemon_name }}"
+Environment="DAEMON_NAME={{ chain_bin }}"
 Environment="DAEMON_HOME={{ cosmovisor_daemon_home }}"
 Environment="DAEMON_ALLOW_DOWNLOAD_BINARIES={{ cosmovisor_daemon_allow_download_binaries | string | lower }}"
 Environment="DAEMON_RESTART_AFTER_UPGRADE={{ cosmovisor_daemon_restart_after_upgrade | string | lower }}"
 Environment="DAEMON_POLL_INTERVAL={{ cosmovisor_daemon_poll_interval }}"
 Environment="UNSAFE_SKIP_BACKUP={{ cosmovisor_unsafe_skip_backup | string | lower }}"
 Environment="DAEMON_PREUPGRADE_MAX_RETRIES={{ cosmovisor_daemon_preupgrade_max_retries }}"
+Environment="DAEMON_LOG_BUFFER_SIZE=512"
 
 [Install]
 WantedBy=multi-user.target

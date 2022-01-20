@@ -9,6 +9,8 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
     os.environ['MOLECULE_INVENTORY_FILE']).get_hosts('all')
 chain_name = os.environ['COSMOS_CHAIN_NAME']
 
+
+# https://github.com/pytest-dev/pytest-testinfra/issues/345
 @pytest.fixture(scope='module')
 def ansible_vars(host):
     defaults_files = "file=../../roles/cosmos/defaults/main.yml"

@@ -1,0 +1,7 @@
+---
+- name: "Disable snapshot-interval" # noqa risky-file-permissions
+  community.general.ini_file:
+    path: "{{ chain_config_app_path }}"
+    section: "state-sync"
+    option: "snapshot-interval"
+    value: 0

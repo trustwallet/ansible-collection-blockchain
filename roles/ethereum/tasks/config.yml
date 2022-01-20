@@ -1,26 +1,4 @@
 ---
-- name: "Create data dir"
-  ansible.builtin.file:
-    dest: "{{ chain_data_dir }}"
-    owner: "{{ username }}"
-    state: directory
-    mode: "744"
-
-- name: "Check config file"
-  ansible.builtin.stat:
-    path: "{{ chain_config_path }}"
-  register: config_stat
-
-- name: "Backup geth config if exists"
-  ansible.builtin.copy:
-    remote_src: true
-    src: "{{ chain_config_path }}"
-    dest: "{{ chain_config_path }}.bak"
-    owner: "{{ username }}"
-    mode: preserve
-  when: config_stat.stat.exists
-  changed_when: false
-
 - name: "Dump geth config"
   ansible.builtin.shell: "{{ chain_bin }} dumpconfig > {{ chain_config_path }}"
   args:

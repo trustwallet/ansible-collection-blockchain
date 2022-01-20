@@ -1,5 +1,12 @@
 ---
 - include_tasks: load_vars.yml
+
 - include_tasks: install.yml
+
+- include_tasks: init.yml
+
 - include_tasks: config.yml
-# - include_tasks: start.yml
+
+- include_tasks: sync.yml
+
+- include_tasks: start.yml

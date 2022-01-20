@@ -1,5 +1,22 @@
 ---
-# <chain_name> defines the a cosmos-sdk based chain to init
+# <username> is the non-root user under which daemon will operate
+username: cosmos
+
+# <home_dir> is a user home dir
+home_dir: "/home/{{ username }}"
+
+# <bin_dir> is a binaries location dir, should be in the PATH.
+bin_dir: /usr/local/bin
+
+# <chain_registry_url> is the URL to get Cosmos-SDK based chain metadata.
+# This value will almost never change.
+chain_registry_url: https://raw.githubusercontent.com/cosmos/chain-registry/master/{{ chain_name }}/chain.json
+
+# <binary_arch> is the system/architecture string to download chain binary.
+binary_arch: linux/amd64
+
+# <chain_name> defines the a Cosmos-SDK based chain to init
+# Requred to be set in role vars.
 chain_name: ""
 
 # <chain_bin_flags> is an optinal extra bin flags
@@ -14,8 +31,31 @@ chain_name: ""
 # to prevent getting spammed by transactions with no gas
 # e.g. chain_minimum_gas_prices: 0.25token1;0.0001token2
 
+# <chain_addrbook_url> is an optinal URL to download chain addrbook.json
+# e.g. chain_addrbook_url: https://network.terra.dev/addrbook.json
+
 # <chain_moniker> is the custom username of your node
 chain_moniker: moniker-1
+
+# <chain_specific_config> is the variable to control loading of chain specific task
+# to update the chain config. Set in chain vars.
+chain_specific_config: false
+
+# <chain_state_pruning> defines the pruning strategy.
+# Avaiable options are default, nothing, everything, custom.
+chain_pruning: default 
+
+# <chain_pruning_keep_recent> defines number of last states to keep (e.g. 100).
+# Only applied when chain_pruning is custom.
+chain_pruning_keep_recent: "0"
+
+# <chain_pruning_keep_every> defines each Nth state to keep (e.g. 500).
+# Only applied when chain_pruning is custom.
+chain_pruning_keep_every: "0"
+
+# <chain_pruning_interval> defines the prunning interval (e.g. 10)
+# Only applied when chain_pruning is custom.
+chain_pruning_interval: "0"
 
 # <cosmovisor_daemon_home> is the location where the `cosmovisor/` dir is kept.
 # Leave empty to initialize with value obtained from chain registry.
@@ -41,14 +81,26 @@ cosmovisor_unsafe_skip_backup: false
 # in the application after exit status of 31. After the maximum number of retries, cosmovisor fails the upgrade.
 cosmovisor_daemon_preupgrade_max_retries: 0
 
-# <username> is the non-root user under which daemon will operate
-username: cosmos
+# <cosmovisor_version> to install. Chains that use Cosmos-SDK `v0.44.3` 
+# or earlier and want to use auto-download feature MUST use Cosmovisor `v0.1.0`
+cosmovisor_version: latest
 
-# <home_dir> is a user home dir
-home_dir: "/home/{{ username }}"
+# <cosmovisor_daemon_description> sets SystemD unit description.
+cosmovisor_daemon_description: Cosmovisor Daemon
 
-# <chain_registry_url> is the URL to get cosmos-sdk based chain metadata.
-chain_registry_url: https://raw.githubusercontent.com/cosmos/chain-registry/master/{{ chain_name }}/chain.json
+# quicksync_available defines whether quicksync mode is avaialble for chain.
+# Set in chain vars.
+quicksync_available: false
 
-# <binary_arch> is the binary system/architecture key to download
-binary_arch: linux/amd64
+# <quicksync_mode> defines the chain data file to download.
+# Avaialable values are pruned, default, archive and none (sync from beginning).
+quicksync_mode: pruned
+
+# <quicksync_mirror> selects the regional mirror.
+# Avaiable options are Netherlands, Singapore, SanFrancisco
+quicksync_mirror: SanFrancisco
+
+# <quicksync_force> forces the chain data download step.
+# Warning, the content of the data dir will be wiped.
+# By default chain data will be downloaded only after chain init.
+quicksync_force: false

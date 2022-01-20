@@ -1,0 +1,50 @@
+---
+- name: "Download chain data"
+  block:
+    - name: "Install apt packages"
+      ansible.builtin.apt:
+        update_cache: true
+        pkg:
+          - liblz4-tool
+          - jq
+    
+    - name: "Get download url"
+      ansible.builtin.shell: "curl https://quicksync.io/{{ chain_name }}.json \
+          | jq -r '.[]|select(.file==\"{{ chain_id }}-{{ quicksync_mode }}\")|select (.mirror==\"{{ quicksync_mirror }}\")|.url'"
+      register: quicksync_url_result
+
+    - name: "Delete data dir"
+      ansible.builtin.file:
+        path: "{{ chain_data_dir }}/data"
+        state: absent
+
+    - name: "Download chain data"
+      ansible.builtin.shell: >
+        wget -O - {{ quicksync_url_result.stdout }} | lz4 -d | tar -xvf -
+      args:
+        chdir: "{{ chain_data_dir }}"
+      async: 72000
+      poll: 10
+      become: true
+      become_user: "{{ username }}"
+
+    # - name: "Update data files ownership"
+    #   ansible.builtin.file:
+    #     dest: "{{ chain_data_dir }}/data"
+    #     owner: "{{ username }}"
+    #     group: "{{ username }}"
+    #     mode: 0644
+    #     recurse: true
+
+    # - name: "Update data dir ownership"
+    #   ansible.builtin.file:
+    #     dest: "{{ chain_data_dir }}/data"
+    #     owner: "{{ username }}"
+    #     group: "{{ username }}"
+    #     mode: 0775
+
+  when:
+    - init_result.changed or quicksync_force
+    - quicksync_available | bool
+    - quicksync_mode != "none"
+
