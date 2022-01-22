@@ -10,6 +10,10 @@ COSMOS_CHAIN_NAME=osmosis molecule -v converge -s cosmos
 Golang to be installed
 
 
+What ports does `gaiad` use?
+https://forum.cosmos.network/t/what-ports-does-gaiad-use/444
+
+
 ## References
 
 * [Cosmos-SDK based chains registry](https://github.com/cosmos/chain-registry/)

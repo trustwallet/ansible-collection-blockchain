@@ -23,11 +23,26 @@
     - name: "Download chain binary"
       ansible.builtin.get_url:
         url: "{{ chain_bin_url }}"
-        dest: "{{ bin_dir }}/{{ chain_bin }}"
+        dest: "{{ bin_dir }}"
         mode: "755"
+      register: get_chain_bin_result
+      when: not chain_bin_url is match('\/[^.]+$') # no extension
+
+    - name: "Link download chain binary"
+      ansible.builtin.file:
+        src: "{{ get_chain_bin_result.dest }}"
+        dest: "{{ bin_dir }}/{{ chain_bin }}"
+        state: link
       when: not chain_bin_url is match('\/[^.]+$') # no extension
 
   when: chain_bin_url is defined
+
+- name: "Ensure permissions of data dir"
+  ansible.builtin.file:
+    dest: "{{ chain_data_dir }}"
+    state: directory
+    owner: "{{ username }}"
+    mode: "774"
 
 - name: "Install cosmovisor"
   ansible.builtin.command: "go install github.com/cosmos/cosmos-sdk/cosmovisor/cmd/cosmovisor@{{ cosmovisor_version }}"

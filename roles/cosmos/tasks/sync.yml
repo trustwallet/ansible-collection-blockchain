@@ -18,11 +18,11 @@
       set_fact:
         quicksync_target: "{{ quicksync_target_result.stdout | from_json }}"
 
-    - name: "Ensure download dir exists"
+    - name: "Ensure download dir permissions"
       ansible.builtin.file:
         dest: "{{ quicksync_donwload_dir }}"
         state: directory
-        mode: "744"
+        mode: "777"
 
     - name: "Download chain data archive"
       ansible.builtin.shell: "aria2c --continue -x5 {{ quicksync_target.url }} > aria.log"
@@ -70,3 +70,10 @@
     - init_result.changed or quicksync_force
     - quicksync_available
     - quicksync_mode != "none"
+
+- name: "Create a symbolic link for cosmovisor to chain /data dir (if not default)"
+  ansible.builtin.file:
+    src: "{{ chain_data_dir }}/data"
+    dest: "{{ cosmovisor_daemon_home }}/data"
+    state: link
+  when: cosmovisor_daemon_home != chain_data_dir

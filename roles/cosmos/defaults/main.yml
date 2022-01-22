@@ -22,6 +22,10 @@ chain_name: ""
 # <chain_bin_flags> is an optinal extra bin flags
 # e.g. chain_bin_flags: "--log_format json"
 
+# <chain_bin_url> is an optional url to download specific version of chain binary.
+# Since chain registry might have outdated data or when secure patch has been released.
+# e.g. chain_bin_url: https://github.com/osmosis-labs/osmosis/releases/download/v6.1.0/osmosisd-6.1.0-linux-amd64
+
 # <chain_data_dir> is the parametr which allows to override chain data location (--home flag).
 # By default equals node_home value from chain registry (e.g. $HOME/.osmosis)
 # e.g. chain_data_dir: /mnt/data/.osmosis
