@@ -12,6 +12,7 @@ license_file: LICENSE
 tags:
   - blockchain
   - ethereum
+  - cosmos-sdk
 dependencies:
   community.general: ">=4.2.0"
 repository: https://github.com/trustwallet/ansible-collection-blockchains

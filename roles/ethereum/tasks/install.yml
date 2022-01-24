@@ -22,9 +22,9 @@
   when:
     - ansible_distribution == "Ubuntu"
 
-- name: "Create data dir"
+- name: "Ensure permissions of data dir"
   ansible.builtin.file:
     dest: "{{ chain_data_dir }}"
-    owner: "{{ username }}"
     state: directory
-    mode: "744"
+    owner: "{{ username }}"
+    mode: "774"

@@ -20,32 +20,32 @@
 
     - name: "Ensure download dir permissions"
       ansible.builtin.file:
-        dest: "{{ quicksync_donwload_dir }}"
+        dest: "{{ quicksync_tmp_dir }}"
         state: directory
         mode: "777"
 
     - name: "Download chain data archive"
       ansible.builtin.shell: "aria2c --continue -x5 {{ quicksync_target.url }} > aria.log"
       args:
-        chdir: "{{ quicksync_donwload_dir }}"
+        chdir: "{{ quicksync_tmp_dir }}"
       async: 72000
       poll: 10
 
     - name: "Download checksum file"
       ansible.builtin.get_url:
         url: "{{ quicksync_target.url }}.checksum"
-        dest: "{{ quicksync_donwload_dir }}"
+        dest: "{{ quicksync_tmp_dir }}"
 
     - name: "Copy checksum tool"
       ansible.builtin.copy:
         src: checksum.sh
-        dest: "{{ quicksync_donwload_dir }}"
+        dest: "{{ quicksync_tmp_dir }}"
         mode: "775"
 
     - name: "Checksum downloaded archive"
       ansible.builtin.command: "./checksum.sh {{ quicksync_target.filename }}"
       args:
-        chdir: "{{ quicksync_donwload_dir }}"
+        chdir: "{{ quicksync_tmp_dir }}"
 
     - name: "Stop service (if running)"
       ansible.builtin.systemd:
@@ -58,7 +58,7 @@
         state: absent
 
     - name: "Extract chain data" # noqa command-instead-of-module
-      ansible.builtin.command: "tar -I lz4 -xf {{ quicksync_donwload_dir }}/{{ quicksync_target.filename }}"
+      ansible.builtin.command: "tar -I lz4 -xf {{ quicksync_tmp_dir }}/{{ quicksync_target.filename }}"
       args:
         chdir: "{{ chain_data_dir }}"
       async: 72000

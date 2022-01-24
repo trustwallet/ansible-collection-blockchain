@@ -1,0 +1,28 @@
+---
+name: Test Ethereum role
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - roles/ethereum/**
+      - molecule/ethereum/**
+
+jobs:
+  ansible-galaxy:
+    name: "ansible-galaxy"
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: "actions/checkout@v2"
+      - uses: "actions/setup-python@v2"
+      - run: "pip install -r molecule/requirements.txt"
+
+      - name: Test role with Molecule
+        run: molecule -v test -s ethereum
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+          AWS_REGION: eu-west-1
+          MOLECULE_VPC_SUBNET_ID: subnet-0b7fc9d535ff8edcb
+          MOLECULE_IMAGE: ami-0fd19782996d81f2d

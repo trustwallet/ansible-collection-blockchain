@@ -4,72 +4,53 @@ Ansible role to manage Ethereum blockchain node with Geth.
 
 ## Requirements
 
-The `geth` can be launched on many operating systems, but this role only targeting `Ubuntu` distribution.
+The `geth` can be launched on many operating systems, but this role only targeting Linux/Unix based operating systems.
 
 ## Role Variables
 
-This roles is using the dumped on-the-fly `geth` config and set
-parameters specified in `defaults/main.yml`.
-For cases when certain parameter is not available for override,
-the `chain_bin_flags` variable can accept any geth command-line flags.
+The role is using the dumped on-the-fly `geth` config and applies the
+variables specified in `defaults/main.yml`. 
+Check the `defaults/main.yml` to see the parameters available for override
+and their role default variables. Other variables not listed there have 
+the defaults according to `geth` documentation, and can be changed
+by specifying `chain_bin_flags` variable when executing the role. 
+
 The execution command is the following:
 
-```
+```shell
 {{ chain_bin }} --config {{ chain_config_path }} {{ chain_bin_flags }}
 ```
 
-The general rule here, if it make sense to have the chosen parameter appear in `config.toml` for better clarity, then submit a pull request to add the flag to `defaults/main.yml`; otherwise pass the additional configuration via `chain_bin_flags`
+The general rule here, if it make sense to have the missed parameter
+configurable, then submit a pull request to add the variable
+to `defaults/main.yml`, and modify `tasks/config.yml`; otherwise pass the
+additional configuration via `chain_bin_flags`.
 
-See the deaults/main.yml to find role defaults.
-
-One of the parameters that can be override is `chain_data_dir`, is the 
+One of the parameters that can be overriden is `chain_data_dir`, the 
 data directory for the config, databases and keystore.
-
-### Geth Variables
-
-| Parameter | Choices/Defaults | Comments | 
-| geth_syncmode | `snap` | Blockchain sync mode ("fast", "full", "snap" or "light") |
-| geth_http | `true` | Enable the HTTP-RPC server |
-| geth_http_addr | `0.0.0.0` | HTTP-RPC server listening interface |
-| geth_http_port | `8545` | HTTP-RPC server listening port |
-| geth_http_api | `eth,net,web3` | API's offered over the HTTP-RPC interface |
-| geth_http_vhosts | `*` | Comma separated list of virtual hostnames from which to accept requests (server enforced). Accepts '*' wildcard. |
-| geth_metrics | `true` | Enable metrics collection and reporting |
-| geth_metrics_addr | `0.0.0.0` | Enable stand-alone metrics HTTP server listening interface |
-| geth_metrics_port | `6060` | Metrics HTTP server listening port |
-
 
 ## Example Playbook
 
-```yml
-- hosts: servers
-  roles:
-    - role: trustwallet.blockchains.ethereum
-      become: yes
-      geth_datadir: /mnt/data
-
-# or
+```yaml
 - hosts: servers
   taks:
     - import_role:
         name: trustwallet.blockchains.ethereum
       vars:
         ansible_become: yes
-        geth_datadir: /mnt/data
+        chain_data_dir: /mnt/data
 ```
 
-
-
 _When Ansible Role targeting an AWS EC2 insance, it might be a good idea to
-change the `geth_datadir` to target directory at attached and mounted 
+change the `chain_data_dir` to target directory at attached & mounted 
 EBS volume (and ensure the EBS Volume is retained on EC2 Instance termination).
 Attaching and mounting the AWS EBS volume is out of scope of this role._
 
+## References
+
+* [Trust Wallet](https://trustwallet.com)
+* [Go Ethereum (geth)](https://geth.ethereum.org/)
 
 ## License
 
 MIT
-
-## Author Information
-
-[Trust Wallet](https://trustwallet.com)

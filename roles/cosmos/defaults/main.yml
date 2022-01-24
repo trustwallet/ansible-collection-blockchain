@@ -109,8 +109,12 @@ quicksync_mirror: Netherlands
 # By default chain data will be downloaded only after chain init.
 quicksync_force: false
 
-# <quicksync_donwload_dir> is the temporary dir to keep downloaded file.
+# <quicksync_tmp_dir> is the temporary dir to keep downloaded file.
 # The aria2c package is utilized to speed up download process,
 # but it requires double size to first download and then unpack data archive.
 # In cloud environment the download dir often points to temporary mounted drive.
-quicksync_donwload_dir: /tmp/quicksync
+quicksync_tmp_dir: /tmp/quicksync
+
+# <golang_bin_dir> is the location of the golang bin folder which will be added
+# to the $PATH.
+golang_bin_dir: /usr/local/go/bin

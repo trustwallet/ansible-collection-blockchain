@@ -38,11 +38,12 @@ export AWS_ACCESS_KEY_ID=
 export AWS_SECRET_KEY=
 ```
 
-Also provide the target region and VPC subnet identifier
+Also provide the target region, image AMI and VPC subnet identifier
 
 ```shell
 export AWS_REGION=us-east-1
-export VPC_SUBNET_ID=subnet-...
+export MOLECULE_VPC_SUBNET_ID=subnet-...
+export MOLECULE_IMAGE=ami-...
 ```
 
 For each role there is a `/molecule/<role>` directory with configration files.
@@ -79,7 +80,9 @@ molecule destroy -s ethereum
 
 ### References
 
-* [Testinfra](https://testinfra.readthedocs.io/en/latest/) unit tests in Python to test actual state of the server configured by Ansible/Molecule.
+* [Trust Wallet](https://trustwallet.com)
+* [Testinfra](https://testinfra.readthedocs.io/en/latest/) unit tests in Python to test actual state of the server configured by Ansible/Molecule
+* [Molecule](https://molecule.readthedocs.io/en/latest/index.html) Anible roles testing framework
 
 ## License
 

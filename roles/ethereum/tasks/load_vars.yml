@@ -1,0 +1,4 @@
+---
+- name: "Set role facts"
+  set_fact:
+    chain_bin_flags: "{{ chain_bin_flags | default('') }}"

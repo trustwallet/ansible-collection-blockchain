@@ -1,4 +1,6 @@
 ---
+- include_tasks: load_vars.yml
+
 - include_tasks: install.yml
 
 - include_tasks: config.yml
