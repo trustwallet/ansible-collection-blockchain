@@ -4,6 +4,11 @@ Trust Wallet is a most trusted & secure crypto wallet.
 
 The Ansible Collection contains Trust Wallet's roles to manage blockchain nodes.
 
+List of the collection roles:
+
+* `trustwallet.blockchains.cosmos` - All Cosmos-SDK based chains
+* `trustwallet.blockchains.ethereum` - Go Ethereum (geth)
+* _...more are comming_
 
 ## Ansible Collection Usage
 
@@ -11,6 +16,33 @@ Install the collection using the following command:
 
 ```shell
 ansible-galaxy collection install trustwallet.blockchains
+```
+
+Example setting up Ethereum Full Node with the collection role:
+
+```yaml
+# playbook.yml
+---
+- hosts: "all"
+  gather_facts: true
+  
+  pre_tasks:
+    - name: "Install apt packages"
+      ansible.builtin.apt:
+        update_cache: yes
+        pkg:
+          - python3
+          - python3-pip
+          - python3-setuptools
+
+  tasks:
+    - import_role:
+        name: trustwallet.blockchains.ethereum
+      vars:
+        ansible_become: true
+        chain_data_dir: /mnt/data
+        geth_syncmode: full
+        geth_metrics: false
 ```
 
 ## Contributing
@@ -78,11 +110,12 @@ Finally, cleanup and destroy
 molecule destroy -s ethereum
 ```
 
-### References
+## References
 
-* [Trust Wallet](https://trustwallet.com)
-* [Testinfra](https://testinfra.readthedocs.io/en/latest/) unit tests in Python to test actual state of the server configured by Ansible/Molecule
+* [Trust Wallet](https://trustwallet.com) crypto wallet project page
+* [Trust Wallet Collection](https://galaxy.ansible.com/trustwallet/blockchains) Ansible Galaxy page
 * [Molecule](https://molecule.readthedocs.io/en/latest/index.html) Anible roles testing framework
+* [Testinfra](https://testinfra.readthedocs.io/en/latest/) unit tests in Python to test actual state of the server configured by Ansible/Molecule
 
 ## License
 
