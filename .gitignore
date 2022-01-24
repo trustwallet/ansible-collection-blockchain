@@ -1,3 +1,4 @@
+.DS_STORE
 tests/output
 __pycache__
 

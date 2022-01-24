@@ -18,3 +18,7 @@ dependencies:
 repository: https://github.com/trustwallet/ansible-collection-blockchains
 issues: https://github.com/trustwallet/ansible-collection-blockchains/issues
 homepage: https://trustwallet.com
+build_ignore:
+  - molecule
+  - venv
+  - '*.tar.gz'
