@@ -21,4 +21,4 @@ homepage: https://trustwallet.com
 build_ignore:
   - molecule
   - venv
-  - '*.tar.gz'
+  - "*.tar.gz"
