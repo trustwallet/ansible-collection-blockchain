@@ -51,6 +51,8 @@ The best way to submit feedback and report bugs is to [open a GitHub issue](http
 
 ## Development
 
+### Molecule Testing Framework
+
 Development/integration of the roles are configured with Molecule and EC2 driver.
 
 It's recommended to develop inside [Virtual environment](https://virtualenv.pypa.io/en/latest/)
@@ -108,6 +110,22 @@ Finally, cleanup and destroy
 
 ```shell
 molecule destroy -s ethereum
+```
+
+### Build Ansible Galaxy Locally
+
+To build the local version of the Ansible Galaxy collection:
+
+```sh
+ansible-galaxy collection build --force
+```
+
+The `trustwallet-blockchains-x.x.x.tar.gz` file will appear at the root of the project.
+
+It can be installed for local testing by executing the following command:
+
+```sh
+ansible-galaxy collection install trustwallet-blockchains-0.1.0.tar.gz --force
 ```
 
 ## References

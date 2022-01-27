@@ -29,7 +29,7 @@ def test_osmosisd_running_and_enabled(host):
     assert s.is_running
     assert s.is_enabled
 
-@pytest.mark.chain("terrad")
+@pytest.mark.chain("terra")
 def test_terrad_running_and_enabled(host):
     s = host.service('terrad')
     assert s.is_running

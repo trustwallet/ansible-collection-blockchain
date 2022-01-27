@@ -36,9 +36,10 @@ then submit a pull request to add the flag to `defaults/main.yml` or
 `vars/<chain>.yml` for specific chain overrides, and modify `tasks/config.yml` or
 `tasks/config_<chain>.yml` to apply the introduced variable.
 
-Some Comsmos-SDK based chains accept additional parameters as command-line flags.
+Some Cosmos-SDK based chains accept additional parameters as command-line flags.
 These flags can be specified via `chain_bin_flags` variable. F.e. `terrad` suggests
-`--x-crisis-skip-assert-invariants` flag to start syncing the node since the last upgrade until it is at the current height (we have alrteady set this variable in `vars/terra.yml`).
+`--x-crisis-skip-assert-invariants` flag to start syncing the node since the last upgrade 
+until it is at the current height (we have already set this variable in `vars/terra.yml`).
 
 ## Example Playbook
 
@@ -54,7 +55,7 @@ These flags can be specified via `chain_bin_flags` variable. F.e. `terrad` sugge
     quicksync_tmp_dir: /tmp/sync
 ```
 
-_When Ansible Role targeting an AWS EC2 insance, it might be a good idea to
+_When Ansible Role targeting an AWS EC2 instance, it might be a good idea to
 change the `chain_data_dir` to target directory at attached & mounted 
 EBS volume (and ensure the EBS Volume is retained on EC2 Instance termination).
 Attaching and mounting the AWS EBS volume is out of scope of this role._

@@ -18,22 +18,22 @@
         dest: "{{ bin_dir }}"
         mode: "755"
         remote_src: true
-      when: chain_bin_url is match('\.tar\.gz$') # .tar.gz
+      when: chain_bin_url is regex('\.tar\.gz$') # .tar.gz
 
     - name: "Download chain binary"
       ansible.builtin.get_url:
         url: "{{ chain_bin_url }}"
         dest: "{{ bin_dir }}"
         mode: "755"
-      register: get_chain_bin_result
-      when: not chain_bin_url is match('\/[^.]+$') # no extension
+      register: get_url_result
+      when: chain_bin_url is regex('[_-][^.]+$') # no extension, e.g. osmosisd-6.1.0-linux-amd64
 
     - name: "Link download chain binary"
       ansible.builtin.file:
-        src: "{{ get_chain_bin_result.dest }}"
+        src: "{{ get_url_result.dest }}"
         dest: "{{ bin_dir }}/{{ chain_bin }}"
         state: link
-      when: not chain_bin_url is match('\/[^.]+$') # no extension
+      when: chain_bin_url is regex('[_-][^.]+$') # no extension, e.g. osmosisd-6.1.0-linux-amd64
 
   when: chain_bin_url is defined
 

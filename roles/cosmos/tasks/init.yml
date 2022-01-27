@@ -1,8 +1,4 @@
 ---
-- name: "Save chan-id as {{ chain_id }} in config"
-  ansible.builtin.command: "{{ chain_bin }} config chain-id {{ chain_id }}"
-  changed_when: false
-
 # https://stackoverflow.com/a/56379678/166473
 - name: "Install acl package"
   ansible.builtin.apt:
