@@ -8,7 +8,7 @@ List of the collection roles:
 
 * `trustwallet.blockchains.cosmos` - All Cosmos-SDK based chains
 * `trustwallet.blockchains.ethereum` - Go Ethereum (geth)
-* _...more are comming_
+* _...more are coming_
 
 ## Ansible Collection Usage
 
@@ -80,7 +80,7 @@ export MOLECULE_VPC_SUBNET_ID=subnet-...
 export MOLECULE_IMAGE=ami-...
 ```
 
-For each role there is a `/molecule/<role>` directory with configration files.
+For each role there is a `/molecule/<role>` directory with configuration files.
 
 Execute full integration scenario which includes steps to install all dependencies, create EC2 instance, execute role, test, cleanup and finally destroy EC2 instance run the following command (e.g. `ethereum` role).
 
@@ -132,7 +132,7 @@ ansible-galaxy collection install trustwallet-blockchains-0.1.0.tar.gz --force
 
 * [Trust Wallet](https://trustwallet.com) crypto wallet project page
 * [Trust Wallet Collection](https://galaxy.ansible.com/trustwallet/blockchains) Ansible Galaxy page
-* [Molecule](https://molecule.readthedocs.io/en/latest/index.html) Anible roles testing framework
+* [Molecule](https://molecule.readthedocs.io/en/latest/index.html) Ansible roles testing framework
 * [Testinfra](https://testinfra.readthedocs.io/en/latest/) unit tests in Python to test actual state of the server configured by Ansible/Molecule
 
 ## License
