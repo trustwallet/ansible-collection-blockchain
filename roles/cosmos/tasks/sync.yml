@@ -18,6 +18,11 @@
       set_fact:
         quicksync_target: "{{ quicksync_target_result.stdout | from_json }}"
 
+    - name: "Set quicksync target url and filename"
+      set_fact:
+        quicksync_target_url: "{{ quicksync_target_url | default(quicksync_target.url) }}"
+        quicksync_target_filename: "{{ quicksync_target_filename | default(quicksync_target.filename) }}"
+
     - name: "Ensure download dir permissions"
       ansible.builtin.file:
         dest: "{{ quicksync_tmp_dir }}"
@@ -25,27 +30,31 @@
         mode: "777"
 
     - name: "Download chain data archive"
-      ansible.builtin.shell: "aria2c --continue -x5 {{ quicksync_target.url }} > aria.log"
+      ansible.builtin.shell: "aria2c --continue -x5 {{ quicksync_target_url }} > aria.log"
       args:
         chdir: "{{ quicksync_tmp_dir }}"
       async: 72000
       poll: 10
+      when: not quicksync_skip_download
 
     - name: "Download checksum file"
       ansible.builtin.get_url:
-        url: "{{ quicksync_target.url }}.checksum"
+        url: "{{ quicksync_target_url }}.checksum"
         dest: "{{ quicksync_tmp_dir }}"
+      when: not quicksync_skip_download
 
     - name: "Copy checksum tool"
       ansible.builtin.copy:
         src: checksum.sh
         dest: "{{ quicksync_tmp_dir }}"
         mode: "775"
+      when: not quicksync_skip_download
 
     - name: "Checksum downloaded archive"
-      ansible.builtin.command: "./checksum.sh {{ quicksync_target.filename }}"
+      ansible.builtin.command: "./checksum.sh {{ quicksync_target_filename }}"
       args:
         chdir: "{{ quicksync_tmp_dir }}"
+      when: not quicksync_skip_download
 
     - name: "Stop service (if running)"
       ansible.builtin.systemd:
@@ -58,7 +67,7 @@
         state: absent
 
     - name: "Extract chain data" # noqa command-instead-of-module
-      ansible.builtin.command: "tar -I lz4 -xf {{ quicksync_tmp_dir }}/{{ quicksync_target.filename }}"
+      ansible.builtin.command: "tar -I lz4 -xf {{ quicksync_tmp_dir }}/{{ quicksync_target_filename }}"
       args:
         chdir: "{{ chain_data_dir }}"
       async: 72000
