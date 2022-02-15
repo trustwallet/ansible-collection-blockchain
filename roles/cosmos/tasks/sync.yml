@@ -30,7 +30,7 @@
         mode: "777"
 
     - name: "Download chain data archive"
-      ansible.builtin.shell: "aria2c --continue -x5 {{ quicksync_target_url }} > aria.log"
+      ansible.builtin.shell: "aria2c --continue --max-connection-per-server={{ quicksync_connection_num }} {{ quicksync_target_url }} > aria.log"
       args:
         chdir: "{{ quicksync_tmp_dir }}"
       async: 72000

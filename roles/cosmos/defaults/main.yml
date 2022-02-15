@@ -41,10 +41,6 @@ chain_name: ""
 # <chain_moniker> is the custom username of your node
 chain_moniker: moniker-1
 
-# <chain_specific_config> is the variable to control loading of chain specific task
-# to update the chain config. Set in chain vars.
-chain_specific_config: false
-
 # <chain_state_pruning> defines the pruning strategy.
 # Avaiable options are default, nothing, everything, custom.
 chain_pruning: default
@@ -60,6 +56,9 @@ chain_pruning_keep_every: "0"
 # <chain_pruning_interval> defines the prunning interval (e.g. 10)
 # Only applied when chain_pruning is custom.
 chain_pruning_interval: "0"
+
+# <chain_api_enable> defines if the API server should be enabled.
+chain_api_enable: true
 
 # <cosmovisor_daemon_home> is the location where the `cosmovisor/` dir is kept.
 # Leave empty to initialize with value obtained from chain registry.
@@ -103,6 +102,9 @@ quicksync_mode: pruned
 # <quicksync_mirror> selects the regional mirror.
 # Avaiable options are Netherlands, Singapore, SanFrancisco
 quicksync_mirror: Netherlands
+
+# <quicksync_connection_num> is the maximum number of connections to the server for each download.
+quicksync_connection_num: 5
 
 # <quicksync_force> forces the chain data download step.
 # Warning, the content of the data dir will be wiped.

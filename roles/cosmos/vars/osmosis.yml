@@ -1,5 +1,4 @@
 ---
 chain_minimum_gas_prices: "0.001uosmo"
-chain_specific_config: true
 chain_addrbook_url: https://quicksync.io/addrbook.osmosis.json
 quicksync_available: true
