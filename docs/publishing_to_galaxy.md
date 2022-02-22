@@ -17,12 +17,12 @@
 
 Additional manual steps are required when automatic publish to Ansible Galaxy
 is not enabled in the repository. This requires a user who has access to the
-`trustwallet.blockchains` namespace on Ansible Galaxy to publish the build artifact.
+`trustwallet.blockchain` namespace on Ansible Galaxy to publish the build artifact.
 
 5. Run the following commands to build and release the new version on Galaxy:
      ```shell
      ansible-galaxy collection build
-     ansible-galaxy collection publish ./trustwallet-blockchains-$VERSION_HERE.tar.gz
+     ansible-galaxy collection publish ./trustwallet-blockchain-$VERSION_HERE.tar.gz
      ```
 
-After the version is published, verify it exists on the [Trust Wallet Collection](https://galaxy.ansible.com/trustwallet/blockchains) Ansible Galaxy page.
+After the version is published, verify it exists on the [Trust Wallet Collection](https://galaxy.ansible.com/trustwallet/blockchain) Ansible Galaxy page.

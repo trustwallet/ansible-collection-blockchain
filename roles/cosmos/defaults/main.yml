@@ -12,15 +12,15 @@ bin_dir: /usr/local/bin
 # This value will almost never change.
 chain_registry_url: https://raw.githubusercontent.com/cosmos/chain-registry/master/{{ chain_name }}/chain.json
 
-# <binary_arch> is the system/architecture string to download chain binary.
-binary_arch: linux/amd64
+# <chain_distro> is the 'system/architecture' string to download chain binary.
+# chain_distro: e.g. linux/amd64
 
 # <chain_name> defines the a Cosmos-SDK based chain to init
 # Requred to be set in role vars.
 chain_name: ""
 
-# <chain_bin_flags> is an optinal extra bin flags
-# e.g. chain_bin_flags: "--log_format json"
+# <extra_run_args> is an optinal extra bin flags
+# e.g. extra_run_args: "--log_format json"
 
 # <chain_bin_url> is an optional url to download specific version of chain binary.
 # Since chain registry might have outdated data or when secure patch has been released.
@@ -41,7 +41,7 @@ chain_name: ""
 # <chain_moniker> is the custom username of your node
 chain_moniker: moniker-1
 
-# <chain_state_pruning> defines the pruning strategy.
+# <chain_pruning> defines the pruning strategy.
 # Avaiable options are default, nothing, everything, custom.
 chain_pruning: default
 
@@ -84,9 +84,9 @@ cosmovisor_unsafe_skip_backup: true
 # in the application after exit status of 31. After the maximum number of retries, cosmovisor fails the upgrade.
 cosmovisor_daemon_preupgrade_max_retries: 0
 
-# <cosmovisor_version> to install. Chains that use Cosmos-SDK `v0.44.3`
-# or earlier and want to use auto-download feature MUST use Cosmovisor `v0.1.0`
-cosmovisor_version: latest
+# <cosmovisor_version> to install. Minumum supported version of cosmovisor is v1.1.0
+# due to new param syntax to start the app.
+cosmovisor_version: v1.1.0
 
 # <cosmovisor_daemon_description> is the SystemD unit description
 cosmovisor_daemon_description: Cosmovisor Daemon
@@ -111,16 +111,12 @@ quicksync_connection_num: 5
 # By default chain data will be downloaded only after chain init.
 quicksync_force: false
 
-# <quicksync_skip_download> skips steps to doanload quicksync chain data archive,
+# <quicksync_skip_download> skips steps to download quicksync chain data archive,
 # assuming that the file has been already downloaded.
 quicksync_skip_download: false
 
 # <quicksync_target_url> allows to override target url to download chain data archive
 # e.g. quicksync_target_url: <custom state url>
-
-# <quicksync_target_filename> allows to override target file name, which can be used to
-# target previously downloaded chain data archive.
-# e.g. quicksync_target_filename: columbus-5-default.20220128.0310.tar.lz4
 
 # <quicksync_tmp_dir> is the temporary dir to keep downloaded file.
 # The aria2c package is utilized to speed up download process,

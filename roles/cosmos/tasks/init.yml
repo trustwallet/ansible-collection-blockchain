@@ -3,8 +3,10 @@
 - name: "Install acl package"
   ansible.builtin.apt:
     update_cache: true
+    cache_valid_time: 86400
     pkg: acl
 
+# Only init once when there is no genesis.json file
 - name: "Init {{ chain_name }} chain"
   ansible.builtin.command: "{{ chain_bin }} init {{ chain_moniker }} --home={{ chain_data_dir }} --chain-id={{ chain_id }}"
   args:
@@ -12,6 +14,7 @@
   become: true
   become_user: "{{ username }}"
   register: init_result
+  notify: restart_service
 
 - name: "Download the genesis file (instead default)" # noqa no-handler
   ansible.builtin.get_url:
@@ -31,3 +34,4 @@
   when:
     - init_result.changed
     - chain_addrbook_url is defined
+  notify: restart_service

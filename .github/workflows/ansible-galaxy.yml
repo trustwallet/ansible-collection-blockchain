@@ -17,4 +17,4 @@ jobs:
       - uses: "actions/setup-python@v2"
       - run: "pip install ansible"
       - run: "ansible-galaxy collection build"
-      - run: "ansible-galaxy collection publish --api-key ${{ secrets.GALAXY_API_KEY }} trustwallet-blockchains-*.tar.gz"
+      - run: "ansible-galaxy collection publish --api-key ${{ secrets.GALAXY_API_KEY }} trustwallet-blockchain-*.tar.gz"

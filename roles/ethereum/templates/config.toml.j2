@@ -1,0 +1,14 @@
+{{ ansible_managed | comment }}
+# see: Geth configuration logic -- https://github.com/ethereum/go-ethereum/blob/master/cmd/geth/config.go
+
+{% for section in geth_config %}
+[{{ section }}]
+{% for key, value in geth_config[section].items() %}
+{% if value is string %}
+{{ key }} = "{{ value }}"
+{% else %}
+{{ key }} = {{ value | to_json }}
+{% endif %}
+{% endfor %}
+
+{% endfor %}

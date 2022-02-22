@@ -12,51 +12,61 @@ based OS.
 ### Golang
 
 This role doesn't attempt to install the golang, but assumes it is available
-at the default location `/usr/local/go/bin`. If in your system golang is installed 
-to other directory, override the `golang_bin_dir` variable when executing the role.
+at the default location `/usr/local/go/bin`. The default location can be overridden
+with the `golang_bin_dir` variable when executing the role.
 
-Golang can be installed with Ansible Galaxy (gantsign.golang)[https://galaxy.ansible.com/gantsign/golang] role.
+Tip: Golang can be installed with Ansible Galaxy (gantsign.golang)[https://galaxy.ansible.com/gantsign/golang] role or similar.
 
-## Role Variables
+### Role Variables
 
-The role applies variables specified in the `defaults/main.yml` to `config.toml`
-and `app.toml` configuration files.
+The role loads the variables in the following order:
 
-The execution command is the following:
+:arrow_down: Role defaults `defaults/main.yml`
+:arrow_down: Role chain variables `vars/<chain>.yml` (optional)
+:arrow_down: Playbook `vars`
+:arrow_down: Role `vars`
+:arrow_down: Role parameters
 
-```shell
-{{ bin_dir }}/cosmovisor start --home {{ chain_data_dir }} {{ chain_bin_flags }}
-```
+As noted, the Cosmos-SDK based chain might have optional variables file
+(e.g. `vars/osmosis.yml`) to override certain config variables.
 
-Also, Cosmos-SDK based chains might have their own variables file
-(e.g. `vars/osmosis.yml`) to override some config variables.
-
-The general rule here, if it makes sense to have the missed parameter configurable,
+The general rule here, if it makes sense to have the parameter configurable,
 then submit a pull request to add the flag to `defaults/main.yml` or 
 `vars/<chain>.yml` for specific chain overrides, and modify `tasks/config.yml` or
 `tasks/config_<chain>.yml` to apply the introduced variable.
 
+### SystemD ExecStart
+
+The execution command is the following:
+
+```shell
+{{ bin_dir }}/cosmovisor run start --home {{ chain_data_dir }} {{ extra_run_args }}
+```
+
 Some Cosmos-SDK based chains accept additional parameters as command-line flags.
-These flags can be specified via `chain_bin_flags` variable. F.e. `terrad` suggests
+These flags can be specified via `extra_run_args` variable. F.e. `terrad` suggests
 `--x-crisis-skip-assert-invariants` flag to start syncing the node since the last upgrade 
 until it is at the current height (we have already set this variable in `vars/terra.yml`).
 
 ## Example Playbook
 
 ```yaml
-- import_role:
-    name: trustwallet.blockchains.cosmos
-  vars:
-    ansible_become: true
-    chain_name: osmosis
-    chain_data_dir: /mnt/data/.osmosisd
-    quicksync_mode: default
-    quicksync_mirror: SanFrancisco
-    quicksync_tmp_dir: /tmp/sync
+---
+- hosts: "all"
+  gather_facts: true
+  become: true
+
+  roles:
+    - role: trustwallet.blockchain.cosmos
+      chain_name: osmosis
+      chain_data_dir: /mnt/data/.osmosisd
+      quicksync_mode: default
+      quicksync_tmp_dir: /tmp/sync
+
 ```
 
 _When Ansible Role targeting an AWS EC2 instance, it might be a good idea to
-change the `chain_data_dir` to target directory at attached & mounted 
+change the `chain_data_dir` to target directory at the attached & mounted 
 EBS volume (and ensure the EBS Volume is retained on EC2 Instance termination).
 Attaching and mounting the AWS EBS volume is out of scope of this role._
 

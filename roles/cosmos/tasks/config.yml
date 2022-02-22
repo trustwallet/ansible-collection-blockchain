@@ -12,6 +12,7 @@
     section: "p2p"
     option: "persistent_peers"
     value: "\"{{ chain_peers }}\""
+  notify: restart_service
 
 - name: "Update indexer" # noqa risky-file-permissions
   community.general.ini_file:
@@ -20,6 +21,7 @@
     option: "indexer"
     value: "\"kv\""
   when: chain_pruning != 'everything'
+  notify: restart_service
 
 - name: "Update indexer (if pruning is everyting)" # noqa risky-file-permissions
   community.general.ini_file:
@@ -28,6 +30,7 @@
     option: "indexer"
     value: "\"null\""
   when: chain_pruning == 'everything'
+  notify: restart_service
 
 # app.toml
 
@@ -37,6 +40,7 @@
     section: ""
     option: "minimum-gas-prices"
     value: "\"{{ chain_minimum_gas_prices }}\""
+  notify: restart_service
 
 - name: "Update pruning strategy" # noqa risky-file-permissions
   community.general.ini_file:
@@ -49,6 +53,7 @@
     - {section: "", option: pruning-keep-recent, value: "\"{{ chain_pruning_keep_recent }}\""}
     - {section: "", option: pruning-keep-every, value: "\"{{ chain_pruning_keep_every }}\""}
     - {section: "", option: pruning-interval, value: "\"{{ chain_pruning_interval }}\""}
+  notify: restart_service
 
 - name: "Enable API server" # noqa risky-file-permissions
   community.general.ini_file:
@@ -56,12 +61,12 @@
     section: "api"
     option: "enable"
     value: "{{ chain_api_enable | string | lower }}"
-
+  notify: restart_service
 
 - name: "Include chain tasks only if such exist, otherwise skip the task"
   include_tasks:
     file: "{{ item }}"
   with_first_found:
-    files:
-     - "config_{{ chain_name }}.yml"
-    skip: true
+    - files:
+        - "config_{{ chain_name }}.yml"
+      skip: true
