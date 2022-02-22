@@ -9,6 +9,10 @@ on:
       - roles/ethereum/**
       - molecule/ethereum/**
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   ansible-galaxy:
     name: "ansible-galaxy"

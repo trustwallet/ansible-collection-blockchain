@@ -9,6 +9,10 @@ on:
       - roles/cosmos/**
       - molecule/cosmos/**
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   ansible-galaxy:
     name: "ansible-galaxy"
