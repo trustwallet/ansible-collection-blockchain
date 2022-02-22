@@ -20,6 +20,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v1
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          role-skip-session-tagging: true
           aws-region: ${{ secrets.AWS_REGION }}
       
       - uses: actions/setup-python@v2
