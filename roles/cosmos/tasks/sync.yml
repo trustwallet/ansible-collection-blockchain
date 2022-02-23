@@ -14,8 +14,11 @@
           - liblz4-tool
 
     - name: "Get download target" # noqa command-instead-of-module
-      ansible.builtin.shell: "curl https://quicksync.io/{{ chain_name }}.json \
-          | jq -r '.[]|select(.file==\"{{ chain_id }}-{{ quicksync_mode }}\")|select (.mirror==\"{{ quicksync_mirror }}\")'"
+      ansible.builtin.shell:
+        cmd: >
+          curl https://quicksync.io/{{ chain_name }}.json
+          | jq -r '.[]|select(.file=="{{ chain_id }}-{{ quicksync_mode }}")|select (.mirror=="{{ quicksync_mirror }}")'
+      changed_when: false
       register: quicksync_target_result
 
     - name: "Set quicksync facts"
@@ -48,8 +51,8 @@
         mode: "777"
 
     - name: "Download chain data archive"
-      ansible.builtin.shell: "aria2c --continue --max-connection-per-server={{ quicksync_connection_num }} {{ target_url }} > aria.log"
-      args:
+      ansible.builtin.shell:
+        cmd: "aria2c --continue --max-connection-per-server={{ quicksync_connection_num }} {{ target_url }} > aria.log"
         chdir: "{{ quicksync_tmp_dir }}"
       async: 72000
       poll: 10
@@ -69,8 +72,8 @@
       when: not quicksync_skip_download
 
     - name: "Checksum downloaded archive"
-      ansible.builtin.command: "./checksum.sh {{ quicksync_target_filename }}"
-      args:
+      ansible.builtin.command:
+        cmd: "./checksum.sh {{ quicksync_target_filename }}"
         chdir: "{{ quicksync_tmp_dir }}"
       when: not quicksync_skip_download
 
@@ -85,13 +88,14 @@
         state: absent
 
     - name: "Extract chain data" # noqa command-instead-of-module
-      ansible.builtin.command: "tar -I lz4 -xf {{ quicksync_tmp_dir }}/{{ quicksync_target_filename }}"
-      args:
+      ansible.builtin.command:
+        cmd: "tar -I lz4 -xf {{ quicksync_tmp_dir }}/{{ quicksync_target_filename }}"
         chdir: "{{ chain_data_dir }}"
       async: 72000
       poll: 10
       become: true
       become_user: "{{ username }}"
+      changed_when: false
       notify: restart_service
 
 - name: "Create a symbolic link for cosmovisor to chain /data dir (if not default)"
