@@ -38,6 +38,10 @@ jobs:
       - run: pip install -r molecule/requirements.txt
         if: steps.cache.outputs.cache-hit != 'true'
 
+      # cosmos role is using the collection plugin
+      - run: ansible-galaxy collection build
+      - run: find trustwallet-blockchain-* | xargs ansible-galaxy collection install
+
       - name: Test role with Molecule
         if: github.repository_owner == 'trustwallet'
         run: molecule -v test -s cosmos
