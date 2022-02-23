@@ -28,6 +28,6 @@
     chain_data_dir: "{{ chain_data_dir | default(metadata.json.node_home | replace('$HOME', home_dir) ) }}"
     chain_genesis_url: "{{ metadata.json.genesis.genesis_url }}"
     chain_id: "{{ metadata.json.chain_id }}"
-    chain_peers: "{{ metadata.json.peers.persistent_peers | trustwallet.blockchains.to_cosmos_peers }}"
+    chain_peers: "{{ metadata.json.peers.persistent_peers | trustwallet.blockchain.to_cosmos_peers }}"
     cosmovisor_daemon_name: "{{ metadata.json.daemon_name }}"
     cosmovisor_daemon_home: "{{ cosmovisor_daemon_home | default(metadata.json.node_home | replace('$HOME', home_dir) ) }}"
