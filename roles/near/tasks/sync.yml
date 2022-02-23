@@ -1,7 +1,7 @@
 ---
 - name: "Download chain data"
   when:
-    #- init_result.changed or quicksync_force
+    - init_result.changed or quicksync_force
     - quicksync_mode != 'none'
   block:
     - name: "Install apt packages"
@@ -16,7 +16,8 @@
 
     - name: "Get latest target"
       ansible.builtin.command:
-        cmd: aws s3 --no-sign-request cp s3://near-protocol-public/backups/mainnet/rpc/latest .
+        cmd: >
+          aws s3 --no-sign-request cp s3://near-protocol-public/backups/mainnet/{{ quicksync_mode }}/latest .
         chdir: /tmp
       changed_when: false
 
@@ -32,9 +33,11 @@
       notify: restart_service
 
     - name: "Download latest data"
-      ansible.builtin.shell: 
+      ansible.builtin.shell:
         cmd: >
-          aws s3 --no-sign-request cp --no-sign-request --recursive 
-          s3://near-protocol-public/backups/mainnet/rpc/$(cat /tmp/latest)
+          aws s3 --no-sign-request cp --no-sign-request --recursive
+          s3://near-protocol-public/backups/mainnet/{{ quicksync_mode }}/$(cat /tmp/latest)
           {{ near_data_dir }}
+      become: true
+      become_user: "{{ username }}"
       changed_when: false

@@ -10,7 +10,7 @@ lint: |
 platforms:
   - name: instance
     image: ${MOLECULE_IMAGE}
-    instance_type: t3.medium
+    instance_type: c5.2xlarge
     vpc_subnet_id: ${MOLECULE_VPC_SUBNET_ID}
     volumes:
       - device_name: /dev/sda1
