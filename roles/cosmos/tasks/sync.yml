@@ -73,7 +73,7 @@
 
     - name: "Checksum downloaded archive"
       ansible.builtin.command:
-        cmd: "./checksum.sh {{ quicksync_target_filename }}"
+        cmd: "./checksum.sh {{ target_filename }}"
         chdir: "{{ quicksync_tmp_dir }}"
       when: not quicksync_skip_download
 
@@ -89,7 +89,7 @@
 
     - name: "Extract chain data" # noqa command-instead-of-module
       ansible.builtin.command:
-        cmd: "tar -I lz4 -xf {{ quicksync_tmp_dir }}/{{ quicksync_target_filename }}"
+        cmd: "tar -I lz4 -xf {{ quicksync_tmp_dir }}/{{ target_filename }}"
         chdir: "{{ chain_data_dir }}"
       async: 72000
       poll: 10
