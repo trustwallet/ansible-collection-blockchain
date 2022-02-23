@@ -1,0 +1,11 @@
+---
+- name: "Create user {{ username }}"
+  ansible.builtin.user:
+    name: "{{ username }}"
+
+- name: "Create systemd service file"
+  ansible.builtin.template:
+    src: templates/service.j2
+    dest: "/etc/systemd/system/{{ near_daemon_name }}.service"
+    mode: "644"
+  notify: restart_service

@@ -1,0 +1,10 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: "Include roles/near"
+      include_role:
+        name: "roles/near"
+      vars:
+        ansible_become: true
+        quicksync_mode: none

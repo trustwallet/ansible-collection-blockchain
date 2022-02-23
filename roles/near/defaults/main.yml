@@ -1,0 +1,24 @@
+---
+# <username> is the non-root user under which daemon will operate
+username: near
+
+# <home_dir> is a user home dir
+home_dir: "/home/{{ username }}"
+
+# <chain_name> is the chain executable
+chain_bin: /usr/local/bin/neard
+
+# <near_data_dir> is the near data dir
+near_data_dir: "{{ home_dir }}/.near"
+
+# <near_daemon_name> defines SystemD service name
+near_daemon_name: neard
+
+# <quicksync_mode> defines the chain data file to download.
+# Avaialable values are rpc, archive and none (sync from beginning).
+quicksync_mode: rpc
+
+# <quicksync_force> forces the chain data download step.
+# Warning, the content of the data dir will be wiped.
+# By default chain data will be downloaded only after chain init.
+quicksync_force: false

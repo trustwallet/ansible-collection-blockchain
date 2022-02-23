@@ -1,0 +1,8 @@
+---
+- name: "Restart neard service"
+  ansible.builtin.systemd:
+    name: "{{ near_daemon_name }}"
+    state: restarted
+    daemon_reload: true
+    enabled: true
+  listen: restart_service

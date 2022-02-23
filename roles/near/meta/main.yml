@@ -1,0 +1,15 @@
+---
+galaxy_info:
+  author: vorotech
+  description: Ansible role to manage NEAR chain
+  company: Trust Wallet
+  license: MIT
+  min_ansible_version: 2.10.6
+  platforms:
+    - name: Ubuntu
+      versions:
+        - all
+  galaxy_tags:
+    - blockchain
+    - near
+dependencies: []

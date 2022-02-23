@@ -1,0 +1,8 @@
+---
+- include_tasks: install.yml
+
+# - include_tasks: init.yml
+
+# - include_tasks: config.yml
+
+- include_tasks: sync.yml
