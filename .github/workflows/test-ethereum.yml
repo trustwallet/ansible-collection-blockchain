@@ -28,7 +28,15 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       - uses: actions/setup-python@v2
+      - uses: actions/cache@v2
+        id: cache-pip
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
       - run: pip install -r molecule/requirements.txt
+        if: steps.cache.outputs.cache-hit != 'true'
 
       - name: Test role with Molecule
         if: github.repository_owner == 'trustwallet'
