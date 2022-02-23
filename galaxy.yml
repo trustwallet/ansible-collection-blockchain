@@ -1,6 +1,6 @@
 ---
 namespace: trustwallet
-name: blockchains
+name: blockchain
 version: 0.1.0
 readme: README.md
 authors:
@@ -12,11 +12,11 @@ license_file: LICENSE
 tags:
   - blockchain
   - ethereum
-  - cosmos-sdk
+  - cosmos
 dependencies:
   community.general: ">=4.2.0"
-repository: https://github.com/trustwallet/ansible-collection-blockchains
-issues: https://github.com/trustwallet/ansible-collection-blockchains/issues
+repository: https://github.com/trustwallet/ansible-collection-blockchain
+issues: https://github.com/trustwallet/ansible-collection-blockchain/issues
 homepage: https://trustwallet.com
 build_ignore:
   - molecule

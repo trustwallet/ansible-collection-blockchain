@@ -10,6 +10,8 @@ galaxy_info:
       versions:
         - all
   galaxy_tags:
-    - ethereum
-    - geth
+    - blockchain
+    - cosmos
+    - terra
+    - osmosis
 dependencies: []

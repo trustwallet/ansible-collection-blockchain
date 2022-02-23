@@ -1,0 +1,8 @@
+---
+- name: "Restart Geth service"
+  ansible.builtin.systemd:
+    name: "{{ geth_daemon_name }}"
+    state: restarted
+    daemon_reload: true
+    enabled: true
+  listen: restart_service

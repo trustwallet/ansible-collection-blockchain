@@ -1,5 +1,9 @@
 ---
 - name: "Download chain data"
+  when:
+    - init_result.changed or quicksync_force
+    - quicksync_available
+    - quicksync_mode != 'none'
   block:
     - name: "Install apt packages"
       ansible.builtin.apt:
@@ -10,18 +14,35 @@
           - liblz4-tool
 
     - name: "Get download target" # noqa command-instead-of-module
-      ansible.builtin.shell: "curl https://quicksync.io/{{ chain_name }}.json \
-          | jq -r '.[]|select(.file==\"{{ chain_id }}-{{ quicksync_mode }}\")|select (.mirror==\"{{ quicksync_mirror }}\")'"
+      ansible.builtin.shell:
+        cmd: >
+          curl https://quicksync.io/{{ chain_name }}.json
+          | jq -r '.[]|select(.file=="{{ chain_id }}-{{ quicksync_mode }}")|select (.mirror=="{{ quicksync_mirror }}")'
+      changed_when: false
       register: quicksync_target_result
 
     - name: "Set quicksync facts"
       set_fact:
         quicksync_target: "{{ quicksync_target_result.stdout | from_json }}"
 
-    - name: "Set quicksync target url and filename"
+    - name: "Set target url and filename"
       set_fact:
-        quicksync_target_url: "{{ quicksync_target_url | default(quicksync_target.url) }}"
-        quicksync_target_filename: "{{ quicksync_target_filename | default(quicksync_target.filename) }}"
+        target_url: "{{ quicksync_target_url | default(quicksync_target.url) }}"
+        target_filename: "{{ quicksync_target.filename }}"
+
+    - name: "Find downloaded data archive (if skip download)"
+      ansible.builtin.find:
+        paths: "{{ quicksync_tmp_dir }}"
+        patterns: "*.tar.gz"
+      register: local_data
+      when: quicksync_skip_download
+
+    - name: "Override target filename (if skip download)"
+      set_fact:
+        target_filename: "{{ local_data.files[0] }}"
+      when:
+        - quicksync_skip_download
+        - local_data.files | length > 0
 
     - name: "Ensure download dir permissions"
       ansible.builtin.file:
@@ -30,8 +51,8 @@
         mode: "777"
 
     - name: "Download chain data archive"
-      ansible.builtin.shell: "aria2c --continue --max-connection-per-server={{ quicksync_connection_num }} {{ quicksync_target_url }} > aria.log"
-      args:
+      ansible.builtin.shell:
+        cmd: "aria2c --continue --max-connection-per-server={{ quicksync_connection_num }} {{ target_url }} > aria.log"
         chdir: "{{ quicksync_tmp_dir }}"
       async: 72000
       poll: 10
@@ -39,7 +60,7 @@
 
     - name: "Download checksum file"
       ansible.builtin.get_url:
-        url: "{{ quicksync_target_url }}.checksum"
+        url: "{{ target_url }}.checksum"
         dest: "{{ quicksync_tmp_dir }}"
       when: not quicksync_skip_download
 
@@ -51,8 +72,8 @@
       when: not quicksync_skip_download
 
     - name: "Checksum downloaded archive"
-      ansible.builtin.command: "./checksum.sh {{ quicksync_target_filename }}"
-      args:
+      ansible.builtin.command:
+        cmd: "./checksum.sh {{ quicksync_target_filename }}"
         chdir: "{{ quicksync_tmp_dir }}"
       when: not quicksync_skip_download
 
@@ -67,18 +88,15 @@
         state: absent
 
     - name: "Extract chain data" # noqa command-instead-of-module
-      ansible.builtin.command: "tar -I lz4 -xf {{ quicksync_tmp_dir }}/{{ quicksync_target_filename }}"
-      args:
+      ansible.builtin.command:
+        cmd: "tar -I lz4 -xf {{ quicksync_tmp_dir }}/{{ quicksync_target_filename }}"
         chdir: "{{ chain_data_dir }}"
       async: 72000
       poll: 10
       become: true
       become_user: "{{ username }}"
-
-  when:
-    - init_result.changed or quicksync_force
-    - quicksync_available
-    - quicksync_mode != "none"
+      changed_when: false
+      notify: restart_service
 
 - name: "Create a symbolic link for cosmovisor to chain /data dir (if not default)"
   ansible.builtin.file:
@@ -86,3 +104,4 @@
     dest: "{{ cosmovisor_daemon_home }}/data"
     state: link
   when: cosmovisor_daemon_home != chain_data_dir
+  notify: restart_service

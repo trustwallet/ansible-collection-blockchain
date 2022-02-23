@@ -10,6 +10,7 @@
     mode: "644"
 
 - name: "Install chain binary"
+  when: chain_bin_url is defined
   block:
 
     - name: "Unarchive chain binary"
@@ -35,8 +36,6 @@
         state: link
       when: chain_bin_url is regex('[_-][^.]+$') # no extension, e.g. osmosisd-6.1.0-linux-amd64
 
-  when: chain_bin_url is defined
-
 - name: "Ensure permissions of data dir"
   ansible.builtin.file:
     dest: "{{ chain_data_dir }}"
@@ -44,13 +43,21 @@
     owner: "{{ username }}"
     mode: "774"
 
+- name: "Git checkout cosmos-sdk to install cosmovisor"
+  ansible.builtin.git:
+    repo: https://github.com/cosmos/cosmos-sdk.git
+    dest: /tmp/cosmos/cosmos-sdk
+    version: "cosmovisor/{{ cosmovisor_version }}"
+
 - name: "Install cosmovisor"
-  ansible.builtin.command: "go install github.com/cosmos/cosmos-sdk/cosmovisor/cmd/cosmovisor@{{ cosmovisor_version }}"
+  ansible.builtin.command: "go install"
   args:
+    chdir: /tmp/cosmos/cosmos-sdk/cosmovisor/cmd/cosmovisor
     creates: "{{ bin_dir }}/cosmovisor"
   environment:
-    PATH: "{{ ansible_env.PATH }}:{{ golang_bin_dir }}"
+    PATH: "{{ golang_bin_dir }}:{{ ansible_env.PATH }}"
     GOBIN: "{{ bin_dir }}"
+  notify: restart_service
 
 - name: "Create cosmovisor folders"
   ansible.builtin.file:
@@ -69,3 +76,4 @@
     dest: "{{ cosmovisor_daemon_home }}/cosmovisor/genesis/bin/{{ chain_bin }}"
     owner: "{{ username }}"
     mode: preserve
+  notify: restart_service

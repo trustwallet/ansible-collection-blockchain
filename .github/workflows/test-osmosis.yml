@@ -9,21 +9,44 @@ on:
       - roles/cosmos/**
       - molecule/cosmos/**
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   ansible-galaxy:
     name: "ansible-galaxy"
     runs-on: "ubuntu-latest"
     steps:
-      - uses: "actions/checkout@v2"
-      - uses: "actions/setup-python@v2"
-      - run: "pip install -r molecule/requirements.txt"
+      - uses: actions/checkout@v2
+
+      - name: Confiugre AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          role-skip-session-tagging: true
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - uses: actions/setup-python@v2
+      - uses: actions/cache@v2
+        id: cache-pip
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      - run: pip install -r molecule/requirements.txt
+        if: steps.cache.outputs.cache-hit != 'true'
+
+      # cosmos role is using the collection plugin
+      - run: ansible-galaxy collection build
+      - run: find trustwallet-blockchain-* | xargs ansible-galaxy collection install
 
       - name: Test role with Molecule
+        if: github.repository_owner == 'trustwallet'
         run: molecule -v test -s cosmos
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
-          AWS_REGION: eu-west-1
-          MOLECULE_VPC_SUBNET_ID: subnet-0b7fc9d535ff8edcb
-          MOLECULE_IMAGE: ami-0fd19782996d81f2d
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          MOLECULE_VPC_SUBNET_ID: ${{ secrets.MOLECULE_VPC_SUBNET_ID }}
+          MOLECULE_IMAGE: ${{ secrets.MOLECULE_IMAGE }}
           COSMOS_CHAIN_NAME: osmosis

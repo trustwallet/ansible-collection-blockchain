@@ -1,4 +1,4 @@
-# {{ ansible_managed }}
+{{ ansible_managed | comment }}
 
 [Unit]
 Description={{ cosmovisor_daemon_description }}
@@ -7,7 +7,7 @@ After=network.target
 [Service]
 Type=simple
 User={{ username }}
-ExecStart={{ bin_dir }}/cosmovisor start --home {{ chain_data_dir }} {{ chain_bin_flags }} {{ chain_id }}
+ExecStart={{ bin_dir }}/cosmovisor run start --home {{ chain_data_dir }} {{ extra_run_args }} {{ chain_id }}
 Restart=on-failure
 RestartSec=3
 LimitNOFILE=4096

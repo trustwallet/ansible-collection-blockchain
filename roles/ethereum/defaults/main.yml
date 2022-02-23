@@ -11,49 +11,41 @@ chain_name: ethereum
 # <chain_name> is the chain executable
 chain_bin: geth
 
-# <chain_bin_flags> is an optinal extra bin flags
-# e.g. chain_bin_flags: ""
+# <extra_run_args> is an optinal extra flags
+extra_run_args: ""
 
 # <chain_data_dir> is the parametr which allows to override chain data location
 chain_data_dir: "{{ home_dir }}/.ethereum"
 
-# <chain_config_file> is the dumped config file name
-chain_config_file: "config.toml"
+# <chain_config_dir> is the chain config dir
+chain_config_dir: "{{ chain_data_dir }}"
 
-# <chain_config_path> is the chain config path
-chain_config_path: "{{ chain_data_dir }}/{{ chain_config_file }}"
-
-# <daemon_name> is the name of the SystemD service file
-daemon_name: gethd
+# <geth_daemon_name> is the name of the SystemD service file
+geth_daemon_name: gethd
 
 # <daemon_description> is the SystemD unit description
 daemon_description: Ethereum Chain Daemon
 
-##
-## ETHEREUM OPTIONS
-##
+geth_config: {}
 
-geth_datadir: "{{ chain_data_dir }}"
-# full: Downloads all blocks (including headers, transactions, and receipts) and generates the state of the blockchain incrementally by executing every block.
-# fast: Downloads all blocks (including headers, transactions and receipts), verifies all headers, and downloads the state and verifies it against the headers.
-# snap: Same functionality as fast, but with a faster algorithm.
-# light: Downloads all block headers, block data, and verifies some randomly.
-geth_syncmode: snap
-
-##
-## API AND CONSOLE OPTIONS
-##
-
-geth_http: true
-geth_http_addr: 0.0.0.0
-geth_http_port: 8545
-geth_http_api: eth,net,web3
-geth_http_vhosts: "*"
-
-##
-## METRICS AND STATS OPTIONS
-##
-
-geth_metrics: true
-geth_metrics_addr: 0.0.0.0
-geth_metrics_port: 6060
+default_geth_config:
+  Eth:
+    # full: Downloads all blocks (including headers, transactions, and receipts) and generates the state of the blockchain incrementally by executing every block.
+    # fast: Downloads all blocks (including headers, transactions and receipts), verifies all headers, and downloads the state and verifies it against the headers.
+    # snap: Same functionality as fast, but with a faster algorithm.
+    # light: Downloads all block headers, block data, and verifies some randomly.
+    SyncMode: "snap"
+  Node:
+    DataDir: "{{ chain_data_dir }}"
+    HTTPHost: "0.0.0.0"
+    HTTPPort: 8545
+    HTTPVirtualHosts:
+      - "*"
+    HTTPModules:
+      - eth
+      - net
+      - web3
+  Metrics:
+    Enabled: false
+    HTTP: "0.0.0.0"
+    Port: 6060

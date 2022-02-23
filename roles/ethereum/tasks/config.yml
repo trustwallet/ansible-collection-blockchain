@@ -1,28 +1,22 @@
 ---
-- name: "Dump geth config"
-  ansible.builtin.shell: "{{ chain_bin }} dumpconfig > {{ chain_config_path }}"
-  args:
-    creates: "{{ chain_config_path }}"
-
-- name: "Change ownership of config"
+- name: "Ensure config dir exists"
   ansible.builtin.file:
-    path: "{{ chain_config_path }}"
+    path: "{{ chain_config_dir }}"
     owner: "{{ username }}"
+    state: directory
+    mode: "774"
 
-- name: "Update config variables" # noqa risky-file-permissions
-  community.general.ini_file:
-    path: "{{ chain_config_path }}"
-    section: "{{ item.section }}"
-    option: "{{ item.option }}"
-    value: "{{ item.value }}"
-  loop:
-    - {section: Eth, option: SyncMode, value: "\"{{ geth_syncmode }}\""}
+- name: "Set final geth config"
+  set_fact:
+    geth_config: "{{ default_geth_config | combine(geth_config, recursive=true) }}"
 
-    - {section: Node, option: DataDir, value: "\"{{ geth_datadir }}\""}
-    - {section: Node, option: HTTPHost, value: "\"{{ geth_http_addr }}\""}
-    - {section: Node, option: HTTPPort, value: "{{ geth_http_port }}"}
-    - {section: Node, option: HTTPVirtualHosts, value: "[\"{{ geth_http_vhosts | join('\", \"') }}\"]"}
-
-    - {section: Metrics, option: HTTP, value: "\"{{ geth_metrics_addr }}\""}
-    - {section: Metrics, option: Port, value: "{{ geth_metrics_port }}"}
-    - {section: Metrics, option: Enabled, value: "{{ geth_metrics | string | lower }}"}
+- name: "Copy Geth config in place"
+  template:
+    src: "config.toml.j2"
+    dest: "{{ chain_config_dir }}/config.toml"
+    owner: "{{ username }}"
+    mode: "644"
+  when:
+    - geth_config is defined
+    - geth_config.keys() | length > 0
+  notify: restart_service

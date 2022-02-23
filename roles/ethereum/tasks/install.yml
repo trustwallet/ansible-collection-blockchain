@@ -6,8 +6,9 @@
 - name: "Create systemd service file"
   ansible.builtin.template:
     src: templates/service.j2
-    dest: "/etc/systemd/system/{{ daemon_name }}.service"
+    dest: "/etc/systemd/system/{{ geth_daemon_name }}.service"
     mode: "644"
+  notify: restart_service
 
 - name: "Install repository from PPA"
   ansible.builtin.apt_repository:
@@ -19,12 +20,14 @@
   ansible.builtin.apt:
     pkg: ethereum
     update_cache: true
+    cache_valid_time: 86400
   when:
     - ansible_distribution == "Ubuntu"
+  notify: restart_service
 
-- name: "Ensure permissions of data dir"
+- name: "Ensure creation of data dir"
   ansible.builtin.file:
-    dest: "{{ chain_data_dir }}"
+    dest: "{{ geth_config.Node.DataDir | default(chain_data_dir) }}"
     state: directory
     owner: "{{ username }}"
     mode: "774"

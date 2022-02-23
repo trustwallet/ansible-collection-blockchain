@@ -11,14 +11,23 @@
       - 200
   register: metadata
 
+- name: "Set amd64 instead of x86_64"
+  set_fact:
+    system_architecture: amd64
+  when: ansible_architecture == 'x86_64'
+
+- name: "Set chain distro"
+  set_fact:
+    chain_distro: "{{ chain_distro | default(ansible_system~'/'~system_architecture | default(ansible_architecture)) | lower }}"
+
 - name: "Set role facts"
   set_fact:
-    chain_bin_flags: "{{ chain_bin_flags | default('') }}"
-    chain_bin_url: "{{ chain_bin_url | default(metadata.json.codebase.binaries[binary_arch]) }}"
+    extra_run_args: "{{ extra_run_args | default('') }}"
+    chain_bin_url: "{{ chain_bin_url | default(metadata.json.codebase.binaries[chain_distro]) }}"
     chain_bin: "{{ metadata.json.daemon_name }}"
     chain_data_dir: "{{ chain_data_dir | default(metadata.json.node_home | replace('$HOME', home_dir) ) }}"
     chain_genesis_url: "{{ metadata.json.genesis.genesis_url }}"
     chain_id: "{{ metadata.json.chain_id }}"
-    chain_peers: "{{ metadata.json.peers.persistent_peers | trustwallet.blockchains.to_cosmos_peers }}"
+    chain_peers: "{{ metadata.json.peers.persistent_peers | trustwallet.blockchain.to_cosmos_peers }}"
     cosmovisor_daemon_name: "{{ metadata.json.daemon_name }}"
     cosmovisor_daemon_home: "{{ cosmovisor_daemon_home | default(metadata.json.node_home | replace('$HOME', home_dir) ) }}"
