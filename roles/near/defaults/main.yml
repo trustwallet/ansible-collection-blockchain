@@ -1,0 +1,36 @@
+---
+# <username> is the non-root user under which daemon will operate
+username: near
+
+# <home_dir> is a user home dir
+home_dir: "/home/{{ username }}"
+
+# <near_version> is the near binary version. When doesn't match, will rebuild binary from sources.
+near_version: 1.24.0
+
+# <near_bin> is the chain executable
+near_bin: /usr/local/bin/neard
+
+# <near_home_dir> is the near home dir
+near_home_dir: "{{ home_dir }}/.near"
+
+# <near_data_dir> is the near data dir
+near_data_dir: "{{ near_home_dir }}/data"
+
+# <near_chain_id> is the near chain id
+near_chain_id: mainnet
+
+# <near_config_json_url> is the near remote config
+near_config_json_url: "https://s3-us-west-1.amazonaws.com/build.nearprotocol.com/nearcore-deploy/{{ near_chain_id }}/config.json"
+
+# <near_daemon_name> defines SystemD service name
+near_daemon_name: neard
+
+# <quicksync_mode> defines the chain data file to download.
+# Avaialable values are rpc, archive and none (sync from beginning).
+quicksync_mode: rpc
+
+# <quicksync_force> forces the chain data download step.
+# Warning, the content of the data dir will be wiped.
+# By default chain data will be downloaded only after chain init.
+quicksync_force: false

@@ -1,0 +1,52 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: ec2
+lint: |
+  set -e
+  yamllint .
+  ansible-lint
+platforms:
+  - name: instance
+    image: ${MOLECULE_IMAGE}
+    instance_type: c5.2xlarge
+    vpc_subnet_id: ${MOLECULE_VPC_SUBNET_ID}
+    volumes:
+      - device_name: /dev/sda1
+        ebs:
+          volume_size: 80
+          delete_on_termination: true
+    tags:
+      Name: molecule-near
+provisioner:
+  name: ansible
+verifier:
+  name: testinfra
+scenario:
+  name: near
+  create_sequence:
+    - create
+    - prepare
+  check_sequence:
+    - destroy
+    - create
+    - prepare
+    - converge
+    - check
+    - destroy
+  converge_sequence:
+    - create
+    - prepare
+    - converge
+  destroy_sequence:
+    - destroy
+  test_sequence:
+    - lint
+    - destroy
+    - syntax
+    - create
+    - prepare
+    - converge
+    - verify
+    - destroy

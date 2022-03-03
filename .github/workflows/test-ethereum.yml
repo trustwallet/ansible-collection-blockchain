@@ -13,6 +13,9 @@ permissions:
   id-token: write
   contents: read
 
+env:
+  MOLECULE_SCENARIO: ethereum
+
 jobs:
   ansible-galaxy:
     name: "ansible-galaxy"
@@ -40,7 +43,7 @@ jobs:
 
       - name: Test role with Molecule
         if: github.repository_owner == 'trustwallet'
-        run: molecule -v test -s ethereum
+        run: molecule -v test -s $MOLECULE_SCENARIO
         env:
           AWS_REGION: ${{ secrets.AWS_REGION }}
           MOLECULE_VPC_SUBNET_ID: ${{ secrets.MOLECULE_VPC_SUBNET_ID }}

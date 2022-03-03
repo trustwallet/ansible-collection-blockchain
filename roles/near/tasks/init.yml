@@ -1,0 +1,32 @@
+---
+# https://stackoverflow.com/a/56379678/166473
+- name: "Install acl package"
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 86400
+    pkg: acl
+
+- name: "Init NEAR {{ near_chain_id }} chain"
+  ansible.builtin.command:
+    cmd: >
+      {{ near_bin }} --home {{ near_home_dir }} init --chain-id={{ near_chain_id }} --download-genesis --download-config
+    creates: "{{ near_home_dir }}/node_key.json"
+  become: true
+  become_user: "{{ username }}"
+  register: init_result
+
+- name: Delete default config.json # noqa no-handler
+  ansible.builtin.file:
+    path: "{{ near_home_dir }}/config.json"
+    state: absent
+  when: init_result.changed
+
+- name: Download config.json # noqa no-handler
+  ansible.builtin.get_url:
+    url: "{{ near_config_json_url }}"
+    dest: "{{ near_home_dir }}/config.json"
+    mode: "640"
+  become: true
+  become_user: "{{ username }}"
+  when: init_result.changed
+  notify: restart_service

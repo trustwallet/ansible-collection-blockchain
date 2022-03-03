@@ -1,0 +1,75 @@
+---
+- name: "Create user {{ username }}"
+  ansible.builtin.user:
+    name: "{{ username }}"
+
+- name: "Create systemd service file"
+  ansible.builtin.template:
+    src: templates/service.j2
+    dest: "/etc/systemd/system/{{ near_daemon_name }}.service"
+    mode: "644"
+  notify: restart_service
+
+- name: "Get NEAR binary version" # noqa no-changed-when
+  ansible.builtin.command:
+    cmd: "{{ near_bin }} -V"
+  failed_when: false
+  register: near_version_result
+
+- name: "Build NEAR binary"
+  when: near_version_result.stdout is not search(near_version)
+  block:
+    - name: "Install Rust" # noqa command-instead-of-module
+      ansible.builtin.shell: "curl https://sh.rustup.rs -sSf | sh -s -- -y"
+      changed_when: false
+
+    - name: "Install apt packages"
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 86400
+        pkg:
+          - binutils-dev
+          - clang
+          - cmake
+          - g++
+          - gcc
+          - libcurl4-openssl-dev
+          - libdw-dev
+          - libiberty-dev
+          - libssl-dev
+          - llvm
+          - pkg-config
+          - protobuf-compiler
+          - zlib1g-dev
+
+    - name: "Git checkout"
+      ansible.builtin.git:
+        repo: https://github.com/near/nearcore
+        dest: /tmp/nearcore
+        version: "{{ near_version }}"
+        force: true
+
+    - name: "Compile nearcore binary" # noqa no-changed-when
+      ansible.builtin.shell:
+        cmd: source ~/.cargo/env && make release
+        chdir: /tmp/nearcore
+        executable: /bin/bash
+      changed_when: false
+      async: 72000
+      poll: 10
+
+    - name: "Copy compiled binary to bin folder"
+      ansible.builtin.copy:
+        src: "/tmp/nearcore/target/release/neard"
+        dest: "{{ near_bin }}"
+        owner: "{{ username }}"
+        mode: "775"
+        remote_src: true
+      notify: restart_service
+
+- name: "Ensure creation of near home dir"
+  ansible.builtin.file:
+    dest: "{{ near_home_dir }}"
+    state: directory
+    owner: "{{ username }}"
+    mode: "774"

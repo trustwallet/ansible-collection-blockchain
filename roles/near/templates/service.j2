@@ -1,0 +1,16 @@
+{{ ansible_managed | comment }}
+
+[Unit]
+Description=NEAR Daemon
+After=network.target
+
+[Service]
+Type=simple
+User={{ username }}
+ExecStart={{ near_bin }} --home={{ near_home_dir }} run
+Restart=on-failure
+RestartSec=3
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target

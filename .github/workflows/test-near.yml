@@ -1,20 +1,20 @@
 ---
-name: Test Cosmos role (osmosis)
+name: Test NEAR role
 
 on:
   pull_request:
     branches:
       - main
     paths:
-      - roles/cosmos/**
-      - molecule/cosmos/**
+      - roles/near/**
+      - molecule/near/**
 
 permissions:
   id-token: write
   contents: read
 
 env:
-  MOLECULE_SCENARIO: osmosis
+  MOLECULE_SCENARIO: near
 
 jobs:
   ansible-galaxy:
@@ -41,9 +41,11 @@ jobs:
       - run: pip install -r molecule/requirements.txt
         if: steps.cache.outputs.cache-hit != 'true'
 
-      # cosmos role is using the collection plugin
-      - run: ansible-galaxy collection build
-      - run: find trustwallet-blockchain-* | xargs ansible-galaxy collection install
+      - uses: actions/cache@v2
+        id: cache-neard-bin
+        with:
+          path: /usr/local/bin/neard
+          key: ${{ runner.os }}-neard
 
       - name: Test role with Molecule
         if: github.repository_owner == 'trustwallet'
@@ -52,4 +54,3 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION }}
           MOLECULE_VPC_SUBNET_ID: ${{ secrets.MOLECULE_VPC_SUBNET_ID }}
           MOLECULE_IMAGE: ${{ secrets.MOLECULE_IMAGE }}
-          COSMOS_CHAIN_NAME: osmosis
