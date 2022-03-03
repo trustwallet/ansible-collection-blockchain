@@ -11,8 +11,11 @@ near_version: 1.24.0
 # <near_bin> is the chain executable
 near_bin: /usr/local/bin/neard
 
+# <near_home_dir> is the near home dir
+near_home_dir: "{{ home_dir }}/.near"
+
 # <near_data_dir> is the near data dir
-near_data_dir: "{{ home_dir }}/.near"
+near_data_dir: "{{ near_home_dir }}/data"
 
 # <near_chain_id> is the near chain id
 near_chain_id: mainnet

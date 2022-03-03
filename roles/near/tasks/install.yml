@@ -49,7 +49,7 @@
         version: "{{ near_version }}"
         force: true
 
-    - name: "Compile nearcore binary"
+    - name: "Compile nearcore binary" # noqa no-changed-when
       ansible.builtin.shell:
         cmd: source ~/.cargo/env && make release
         chdir: /tmp/nearcore
@@ -65,3 +65,10 @@
         mode: "775"
         remote_src: true
       notify: restart_service
+
+- name: "Ensure creation of near home dir"
+  ansible.builtin.file:
+    dest: "{{ near_home_dir }}"
+    state: directory
+    owner: "{{ username }}"
+    mode: "774"
