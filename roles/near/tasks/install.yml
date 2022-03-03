@@ -54,6 +54,7 @@
         cmd: source ~/.cargo/env && make release
         chdir: /tmp/nearcore
         executable: /bin/bash
+      changed_when: false
       async: 72000
       poll: 10
 
