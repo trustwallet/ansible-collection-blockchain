@@ -9,7 +9,7 @@
     dest: "/etc/systemd/system/{{ cosmovisor_daemon_name }}.service"
     mode: "644"
 
-- name: "Install chain binary"
+- name: "Download chain binary"
   when: chain_bin_url is defined
   block:
 
@@ -21,7 +21,7 @@
         remote_src: true
       when: chain_bin_url is regex('\.tar\.gz$') # .tar.gz
 
-    - name: "Download chain binary"
+    - name: "Download {{ chain_name }} binary"
       ansible.builtin.get_url:
         url: "{{ chain_bin_url }}"
         dest: "{{ bin_dir }}"
@@ -35,6 +35,38 @@
         dest: "{{ bin_dir }}/{{ chain_bin }}"
         state: link
       when: chain_bin_url is regex('[_-][^.]+$') # no extension, e.g. osmosisd-6.1.0-linux-amd64
+
+- name: "Make chain binary"
+  when:
+    - chain_git_repo is defined
+    - chain_bin_url is not defined
+  block:
+    - name: "Install apt packages"
+      ansible.builtin.apt:
+        update_cache: true
+        pkg:
+          - build-essential
+          - curl
+          - git
+          - jq
+          - snapd
+          - ufw
+
+    - name: "Git checkout chain repo"
+      ansible.builtin.git:
+        repo: "{{ chain_git_repo }}"
+        dest: "/tmp/{{ chain_name }}"
+        version: "{{ chain_version }}"
+
+    - name: "Make {{ chain_name }} binary"
+      ansible.builtin.command: "make install"
+      args:
+        chdir: "/tmp/{{ chain_name }}"
+        creates: "{{ bin_dir }}/{{ chain_bin }}"
+      environment:
+        PATH: "{{ golang_bin_dir }}:{{ ansible_env.PATH }}"
+        GOBIN: "{{ bin_dir }}"
+      notify: restart_service
 
 - name: "Ensure permissions of data dir"
   ansible.builtin.file:

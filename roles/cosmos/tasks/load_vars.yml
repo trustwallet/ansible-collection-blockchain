@@ -23,7 +23,6 @@
 - name: "Set role facts"
   set_fact:
     extra_run_args: "{{ extra_run_args | default('') }}"
-    chain_bin_url: "{{ chain_bin_url | default(metadata.json.codebase.binaries[chain_distro]) }}"
     chain_bin: "{{ metadata.json.daemon_name }}"
     chain_data_dir: "{{ chain_data_dir | default(metadata.json.node_home | replace('$HOME', home_dir) ) }}"
     chain_genesis_url: "{{ metadata.json.genesis.genesis_url }}"
@@ -31,3 +30,11 @@
     chain_peers: "{{ metadata.json.peers.persistent_peers | trustwallet.blockchain.to_cosmos_peers }}"
     cosmovisor_daemon_name: "{{ metadata.json.daemon_name }}"
     cosmovisor_daemon_home: "{{ cosmovisor_daemon_home | default(metadata.json.node_home | replace('$HOME', home_dir) ) }}"
+
+- name: "Set chain bin url"
+  set_fact:
+    chain_bin_url: "{{ metadata.json.codebase.binaries[chain_distro] }}"
+  when:
+   - chain_bin_url is not defined
+   - metadata.json.codebase.binaries | default([]) | length > 0
+   - metadata.json.codebase.binaries[chain_distro] is defined
