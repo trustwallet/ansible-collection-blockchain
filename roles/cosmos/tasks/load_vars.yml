@@ -35,6 +35,6 @@
   set_fact:
     chain_bin_url: "{{ metadata.json.codebase.binaries[chain_distro] }}"
   when:
-   - chain_bin_url is not defined
-   - metadata.json.codebase.binaries | default([]) | length > 0
-   - metadata.json.codebase.binaries[chain_distro] is defined
+    - chain_bin_url is not defined
+    - metadata.json.codebase.binaries | default([]) | length > 0
+    - metadata.json.codebase.binaries[chain_distro] is defined
