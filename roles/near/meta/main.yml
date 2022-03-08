@@ -1,7 +1,7 @@
 ---
 galaxy_info:
   author: vorotech
-  description: Ansible role to manage NEAR chain
+  description: Ansible role to manage NEAR blockchain node
   company: Trust Wallet
   license: MIT
   min_ansible_version: 2.10.6
