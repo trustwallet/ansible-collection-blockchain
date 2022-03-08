@@ -1,107 +1,93 @@
 ---
-- name: "Download chain data"
+- name: "Install apt packages"
+  ansible.builtin.apt:
+    update_cache: true
+    pkg:
+      - aria2
+      - jq
+      - liblz4-tool
+
+- name: "Get download target" # noqa command-instead-of-module
+  ansible.builtin.shell:
+    cmd: >
+      curl https://quicksync.io/{{ chain_name }}.json
+      | jq -r '.[]|select(.file=="{{ chain_id }}-{{ quicksync_mode }}")|select (.mirror=="{{ quicksync_mirror }}")'
+  changed_when: false
+  register: quicksync_target_result
+
+- name: "Set quicksync facts"
+  set_fact:
+    quicksync_target: "{{ quicksync_target_result.stdout | from_json }}"
+
+- name: "Set target url and filename"
+  set_fact:
+    target_url: "{{ quicksync_target_url | default(quicksync_target.url) }}"
+    target_filename: "{{ quicksync_target.filename }}"
+
+- name: "Find downloaded data archive (if skip download)"
+  ansible.builtin.find:
+    paths: "{{ quicksync_tmp_dir }}"
+    patterns: "*.tar.gz"
+  register: local_data
+  when: quicksync_skip_download
+
+- name: "Override target filename (if skip download)"
+  set_fact:
+    target_filename: "{{ local_data.files[0] }}"
   when:
-    - init_result.changed or quicksync_force
-    - quicksync_available
-    - quicksync_mode != 'none'
-  block:
-    - name: "Install apt packages"
-      ansible.builtin.apt:
-        update_cache: true
-        pkg:
-          - aria2
-          - jq
-          - liblz4-tool
+    - quicksync_skip_download
+    - local_data.files | length > 0
 
-    - name: "Get download target" # noqa command-instead-of-module
-      ansible.builtin.shell:
-        cmd: >
-          curl https://quicksync.io/{{ chain_name }}.json
-          | jq -r '.[]|select(.file=="{{ chain_id }}-{{ quicksync_mode }}")|select (.mirror=="{{ quicksync_mirror }}")'
-      changed_when: false
-      register: quicksync_target_result
-
-    - name: "Set quicksync facts"
-      set_fact:
-        quicksync_target: "{{ quicksync_target_result.stdout | from_json }}"
-
-    - name: "Set target url and filename"
-      set_fact:
-        target_url: "{{ quicksync_target_url | default(quicksync_target.url) }}"
-        target_filename: "{{ quicksync_target.filename }}"
-
-    - name: "Find downloaded data archive (if skip download)"
-      ansible.builtin.find:
-        paths: "{{ quicksync_tmp_dir }}"
-        patterns: "*.tar.gz"
-      register: local_data
-      when: quicksync_skip_download
-
-    - name: "Override target filename (if skip download)"
-      set_fact:
-        target_filename: "{{ local_data.files[0] }}"
-      when:
-        - quicksync_skip_download
-        - local_data.files | length > 0
-
-    - name: "Ensure download dir permissions"
-      ansible.builtin.file:
-        dest: "{{ quicksync_tmp_dir }}"
-        state: directory
-        mode: "777"
-
-    - name: "Download chain data archive"
-      ansible.builtin.shell:
-        cmd: "aria2c --continue --max-connection-per-server={{ quicksync_connection_num }} {{ target_url }} > aria.log"
-        chdir: "{{ quicksync_tmp_dir }}"
-      async: 72000
-      poll: 10
-      when: not quicksync_skip_download
-
-    - name: "Download checksum file"
-      ansible.builtin.get_url:
-        url: "{{ target_url }}.checksum"
-        dest: "{{ quicksync_tmp_dir }}"
-      when: not quicksync_skip_download
-
-    - name: "Copy checksum tool"
-      ansible.builtin.copy:
-        src: checksum.sh
-        dest: "{{ quicksync_tmp_dir }}"
-        mode: "775"
-      when: not quicksync_skip_download
-
-    - name: "Checksum downloaded archive"
-      ansible.builtin.command:
-        cmd: "./checksum.sh {{ target_filename }}"
-        chdir: "{{ quicksync_tmp_dir }}"
-      when: not quicksync_skip_download
-
-    - name: "Stop service (if running)"
-      ansible.builtin.systemd:
-        name: "{{ cosmovisor_daemon_name }}"
-        state: stopped
-
-    - name: "Delete data dir"
-      ansible.builtin.file:
-        path: "{{ chain_data_dir }}/data"
-        state: absent
-
-    - name: "Extract chain data" # noqa command-instead-of-module
-      ansible.builtin.command:
-        cmd: "tar -I lz4 -xf {{ quicksync_tmp_dir }}/{{ target_filename }}"
-        chdir: "{{ chain_data_dir }}"
-      async: 72000
-      poll: 10
-      become: true
-      become_user: "{{ username }}"
-      changed_when: false
-      notify: restart_service
-
-- name: "Create a symbolic link for cosmovisor to chain /data dir (if not default)"
+- name: "Ensure download dir permissions"
   ansible.builtin.file:
-    src: "{{ chain_data_dir }}/data"
-    dest: "{{ cosmovisor_daemon_home }}/data"
-    state: link
-  when: cosmovisor_daemon_home != chain_data_dir
+    dest: "{{ quicksync_tmp_dir }}"
+    state: directory
+    mode: "777"
+
+- name: "Download chain data archive"
+  ansible.builtin.shell:
+    cmd: "aria2c --continue --max-connection-per-server={{ quicksync_connection_num }} {{ target_url }} > aria.log"
+    chdir: "{{ quicksync_tmp_dir }}"
+  async: 72000
+  poll: 10
+  when: not quicksync_skip_download
+
+- name: "Download checksum file"
+  ansible.builtin.get_url:
+    url: "{{ target_url }}.checksum"
+    dest: "{{ quicksync_tmp_dir }}"
+  when: not quicksync_skip_download
+
+- name: "Copy checksum tool"
+  ansible.builtin.copy:
+    src: checksum.sh
+    dest: "{{ quicksync_tmp_dir }}"
+    mode: "775"
+  when: not quicksync_skip_download
+
+- name: "Checksum downloaded archive"
+  ansible.builtin.command:
+    cmd: "./checksum.sh {{ target_filename }}"
+    chdir: "{{ quicksync_tmp_dir }}"
+  when: not quicksync_skip_download
+
+- name: "Stop service (if running)"
+  ansible.builtin.systemd:
+    name: "{{ chain_daemon_name }}"
+    state: stopped
+
+- name: "Delete data dir"
+  ansible.builtin.file:
+    path: "{{ chain_data_dir }}/data"
+    state: absent
+
+- name: "Extract chain data" # noqa command-instead-of-module
+  ansible.builtin.command:
+    cmd: "tar -I lz4 -xf {{ quicksync_tmp_dir }}/{{ target_filename }}"
+    chdir: "{{ chain_data_dir }}"
+  async: 72000
+  poll: 10
+  become: true
+  become_user: "{{ username }}"
+  changed_when: false
   notify: restart_service

@@ -60,37 +60,6 @@ chain_pruning_interval: "0"
 # <chain_api_enable> defines if the API server should be enabled.
 chain_api_enable: true
 
-# <cosmovisor_daemon_home> is the location where the `cosmovisor/` dir is kept.
-# Leave empty to initialize with value obtained from chain registry.
-# e.g. cosmovisor_daemon_home: ""
-
-# <cosmovisor_daemon_allow_download_binaries>, if `true`, will enable auto-downloading of new binaries
-# (for security reasons, this is intended for full nodes rather than validators).
-cosmovisor_daemon_allow_download_binaries: false
-
-# <cosmovisor_daemon_restart_after_upgrade>, if `true`, restarts the subprocess with the same command-line
-# arguments and flags (but with the new binary) after a successful upgrade.
-cosmovisor_daemon_restart_after_upgrade: true
-
-# <cosmovisor_daemon_poll_interval> is the interval length for polling the upgrade plan file.
-# The value can either be a number (in milliseconds) or a duration (e.g. `1s`).
-cosmovisor_daemon_poll_interval: 300
-
-# <cosmovisor_unsafe_skip_backup>, if true, upgrades directly without performing a backup;
-# otherwise backs up the data before trying the upgrade.
-cosmovisor_unsafe_skip_backup: true
-
-# <cosmovisor_daemon_preupgrade_max_retries> is the maximum number of times to call pre-upgrade
-# in the application after exit status of 31. After the maximum number of retries, cosmovisor fails the upgrade.
-cosmovisor_daemon_preupgrade_max_retries: 0
-
-# <cosmovisor_version> to install. Minumum supported version of cosmovisor is v1.1.0
-# due to new param syntax to start the app.
-cosmovisor_version: v1.1.0
-
-# <cosmovisor_daemon_description> is the SystemD unit description
-cosmovisor_daemon_description: Cosmovisor Daemon
-
 # quicksync_available defines whether quicksync mode is avaialble for chain.
 # Set in chain vars.
 quicksync_available: false

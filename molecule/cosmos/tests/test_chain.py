@@ -26,11 +26,9 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
 @pytest.mark.chain("osmosis")
 def test_osmosisd_running_and_enabled(host):
     s = host.service('osmosisd')
-    assert s.is_running
     assert s.is_enabled
 
 @pytest.mark.chain("terra")
 def test_terrad_running_and_enabled(host):
     s = host.service('terrad')
-    assert s.is_running
     assert s.is_enabled
