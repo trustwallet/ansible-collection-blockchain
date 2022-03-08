@@ -8,3 +8,7 @@
 - include_tasks: config.yml
 
 - include_tasks: sync.yml
+  when:
+    - init_result.changed or quicksync_force
+    - quicksync_available
+    - quicksync_mode != 'none'

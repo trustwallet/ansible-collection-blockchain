@@ -40,7 +40,7 @@ then submit a pull request to add the flag to `defaults/main.yml` or
 The execution command is the following:
 
 ```shell
-{{ bin_dir }}/cosmovisor run start --home {{ chain_data_dir }} {{ extra_run_args }}
+{{ bin_dir }}/{{ chain_bin }} start --home {{ chain_data_dir }} {{ extra_run_args }}
 ```
 
 Some Cosmos-SDK based chains accept additional parameters as command-line flags.

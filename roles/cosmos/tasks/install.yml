@@ -6,7 +6,7 @@
 - name: "Create systemd service file"
   ansible.builtin.template:
     src: templates/service.j2
-    dest: "/etc/systemd/system/{{ cosmovisor_daemon_name }}.service"
+    dest: "/etc/systemd/system/{{ chain_daemon_name }}.service"
     mode: "644"
 
 - name: "Download chain binary"
@@ -20,6 +20,7 @@
         mode: "755"
         remote_src: true
       when: chain_bin_url is regex('\.tar\.gz$') # .tar.gz
+      notify: restart_service
 
     - name: "Download {{ chain_name }} binary"
       ansible.builtin.get_url:
@@ -28,6 +29,7 @@
         mode: "755"
       register: get_url_result
       when: chain_bin_url is regex('[_-][^.]+$') # no extension, e.g. osmosisd-6.1.0-linux-amd64
+      notify: restart_service
 
     - name: "Link download chain binary"
       ansible.builtin.file:
@@ -35,6 +37,7 @@
         dest: "{{ bin_dir }}/{{ chain_bin }}"
         state: link
       when: chain_bin_url is regex('[_-][^.]+$') # no extension, e.g. osmosisd-6.1.0-linux-amd64
+      notify: restart_service
 
 - name: "Make chain binary"
   when:
@@ -74,38 +77,3 @@
     state: directory
     owner: "{{ username }}"
     mode: "774"
-
-- name: "Git checkout cosmos-sdk to install cosmovisor"
-  ansible.builtin.git:
-    repo: https://github.com/cosmos/cosmos-sdk.git
-    dest: /tmp/cosmos/cosmos-sdk
-    version: "cosmovisor/{{ cosmovisor_version }}"
-
-- name: "Install cosmovisor"
-  ansible.builtin.command: "go install"
-  args:
-    chdir: /tmp/cosmos/cosmos-sdk/cosmovisor/cmd/cosmovisor
-    creates: "{{ bin_dir }}/cosmovisor"
-  environment:
-    PATH: "{{ golang_bin_dir }}:{{ ansible_env.PATH }}"
-    GOBIN: "{{ bin_dir }}"
-  notify: restart_service
-
-- name: "Create cosmovisor folders"
-  ansible.builtin.file:
-    dest: "{{ item }}"
-    owner: "{{ username }}"
-    state: directory
-    mode: "744"
-  loop:
-    - "{{ cosmovisor_daemon_home }}/cosmovisor/genesis/bin"
-    - "{{ cosmovisor_daemon_home }}/cosmovisor/upgrades"
-
-- name: "Copy chain binary to cosmovisor home dir"
-  ansible.builtin.copy:
-    remote_src: true
-    src: "{{ bin_dir }}/{{ chain_bin }}"
-    dest: "{{ cosmovisor_daemon_home }}/cosmovisor/genesis/bin/{{ chain_bin }}"
-    owner: "{{ username }}"
-    mode: preserve
-  notify: restart_service
