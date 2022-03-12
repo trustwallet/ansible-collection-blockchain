@@ -39,8 +39,15 @@
       when: chain_bin_url is regex('[_-][^.]+$') # no extension, e.g. osmosisd-6.1.0-linux-amd64
       notify: restart_service
 
+- name: "Get {{ chain_bin }} binary version" # noqa no-changed-when
+  ansible.builtin.shell:
+    cmd: "{{ bin_dir }}/{{ chain_bin }} version 2>&1"
+  failed_when: false
+  register: chain_version_result
+
 - name: "Make chain binary"
   when:
+    - ('v'~chain_version_result.stdout) is not search(chain_version)
     - chain_git_repo is defined
     - chain_bin_url is not defined
   block:
@@ -61,11 +68,10 @@
         dest: "/tmp/{{ chain_name }}"
         version: "{{ chain_version }}"
 
-    - name: "Make {{ chain_name }} binary"
+    - name: "Make {{ chain_name }} binary" # noqa no-changed-when
       ansible.builtin.command: "make install"
       args:
         chdir: "/tmp/{{ chain_name }}"
-        creates: "{{ bin_dir }}/{{ chain_bin }}"
       environment:
         PATH: "{{ golang_bin_dir }}:{{ ansible_env.PATH }}"
         GOBIN: "{{ bin_dir }}"
