@@ -47,6 +47,7 @@
 
 - name: "Make chain binary"
   when:
+    - chain_version is defined
     - ('v'~chain_version_result.stdout) is not search(chain_version)
     - chain_git_repo is defined
     - chain_bin_url is not defined
