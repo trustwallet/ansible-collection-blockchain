@@ -56,13 +56,14 @@
   ansible.builtin.get_url:
     url: "{{ target_url }}.checksum"
     dest: "{{ quicksync_tmp_dir }}"
+    mode: "755"
   when: not quicksync_skip_download
 
 - name: "Copy checksum tool"
   ansible.builtin.copy:
     src: checksum.sh
     dest: "{{ quicksync_tmp_dir }}"
-    mode: "775"
+    mode: "755"
   when: not quicksync_skip_download
 
 - name: "Checksum downloaded archive"
