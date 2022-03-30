@@ -12,5 +12,5 @@
         # chain_bin_url: https://github.com/osmosis-labs/osmosis/releases/download/v6.1.0/osmosisd-6.1.0-linux-amd64
         # quicksync_force: true
         chain_git_repo: https://github.com/osmosis-labs/osmosis
-        chain_version: v7.0.4
+        chain_version: v7.1.0
         quicksync_mode: none
