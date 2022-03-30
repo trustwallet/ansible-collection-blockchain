@@ -1,6 +1,6 @@
 ---
 - name: "Set chain configs"
-  set_fact:
+  ansible.builtin.set_fact:
     chain_config_path: "{{ chain_data_dir }}/config/config.toml"
     chain_config_app_path: "{{ chain_data_dir }}/config/app.toml"
 
@@ -63,7 +63,7 @@
   notify: restart_service
 
 - name: "Include chain tasks only if such exist, otherwise skip the task"
-  include_tasks:
+  ansible.builtin.include_tasks:
     file: "{{ item }}"
   with_first_found:
     - files:

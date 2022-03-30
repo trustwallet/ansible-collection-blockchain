@@ -7,11 +7,11 @@
     mode: "774"
 
 - name: "Set final geth config"
-  set_fact:
+  ansible.builtin.set_fact:
     geth_config: "{{ default_geth_config | combine(geth_config, recursive=true) }}"
 
 - name: "Copy Geth config in place"
-  template:
+  ansible.builtin.template:
     src: "config.toml.j2"
     dest: "{{ chain_config_dir }}/config.toml"
     owner: "{{ username }}"

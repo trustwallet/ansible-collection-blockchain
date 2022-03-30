@@ -1,6 +1,6 @@
 ---
 - name: "Include {{ chain_name }} vars"
-  include_vars:
+  ansible.builtin.include_vars:
     file: "vars/{{ chain_name }}.yml"
 
 - name: "Get metadata from chain registry"
@@ -12,16 +12,16 @@
   register: metadata
 
 - name: "Set amd64 instead of x86_64"
-  set_fact:
+  ansible.builtin.set_fact:
     system_architecture: amd64
   when: ansible_architecture == 'x86_64'
 
 - name: "Set chain distro"
-  set_fact:
+  ansible.builtin.set_fact:
     chain_distro: "{{ chain_distro | default(ansible_system~'/'~system_architecture | default(ansible_architecture)) | lower }}"
 
 - name: "Set role facts"
-  set_fact:
+  ansible.builtin.set_fact:
     extra_run_args: "{{ extra_run_args | default('') }}"
     chain_bin: "{{ metadata.json.daemon_name }}"
     chain_data_dir: "{{ chain_data_dir | default(metadata.json.node_home | replace('$HOME', home_dir) ) }}"
@@ -31,7 +31,7 @@
     chain_daemon_name: "{{ metadata.json.daemon_name }}"
 
 - name: "Set chain bin url"
-  set_fact:
+  ansible.builtin.set_fact:
     chain_bin_url: "{{ metadata.json.codebase.binaries[chain_distro] }}"
   when:
     - chain_bin_url is not defined
