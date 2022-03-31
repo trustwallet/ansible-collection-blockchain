@@ -1,8 +1,8 @@
 ---
 - name: "Set chain configs"
   ansible.builtin.set_fact:
-    chain_config_path: "{{ chain_data_dir }}/config/config.toml"
-    chain_config_app_path: "{{ chain_data_dir }}/config/app.toml"
+    chain_config_path: "{{ data_dir }}/config/config.toml"
+    chain_config_app_path: "{{ data_dir }}/config/app.toml"
 
 # config.toml
 

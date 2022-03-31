@@ -16,7 +16,7 @@ when executing the role.
 The execution command is the following:
 
 ```shell
-{{ chain_bin }} --config {{ chain_config_dir }}/config.toml {{ extra_run_args }}
+{{ chain_bin }} --config {{ data_dir }}/config.toml {{ extra_run_args }}
 ```
 
 ## Example Playbook
@@ -28,16 +28,11 @@ The execution command is the following:
   
   roles:
     - role: trustwallet.blockchain.ethereum
-      chain_data_dir: /mnt/data
+      data_dir: /mnt/data # example of custom data dir, default is /home/users/.ethereum
       geth_config:
         Eth:
           SyncMode: full
 ```
-
-_When Ansible Role targeting an AWS EC2 instance, it might be a good idea to
-change the `chain_data_dir` to target directory at attached & mounted 
-EBS volume (and ensure the EBS Volume is retained on EC2 Instance termination).
-Attaching and mounting the AWS EBS volume is out of scope of this role._
 
 ## Development
 

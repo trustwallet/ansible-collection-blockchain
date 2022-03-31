@@ -10,11 +10,25 @@ on:
 
 jobs:
   ansible-galaxy:
-    name: "ansible-galaxy"
-    runs-on: "ubuntu-latest"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
     steps:
-      - uses: "actions/checkout@v2"
-      - uses: "actions/setup-python@v2"
-      - run: "pip install ansible"
-      - run: "ansible-galaxy collection build"
-      - run: "ansible-galaxy collection publish --api-key ${{ secrets.GALAXY_API_KEY }} trustwallet-blockchain-*.tar.gz"
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+
+      - name: Install Ansible package
+        run: pip install ansible
+
+      - name: Build Ansible Galaxy collection
+        id: build
+        run: |
+          VERSION=$(ansible-galaxy collection build | sed 's/.*-\(.*\)\.tar\.gz/\1/')
+          echo "::set-output name=collection-version::$VERSION"
+
+      - name: Publish Ansible Galaxy collection
+        run: ansible-galaxy collection publish --api-key ${{ secrets.GALAXY_API_KEY }} trustwallet-blockchain-*.tar.gz

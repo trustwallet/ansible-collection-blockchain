@@ -26,9 +26,9 @@
         name: "{{ near_daemon_name }}"
         state: stopped
 
-    - name: "Delete data dir"
+    - name: "Delete inner data dir"
       ansible.builtin.file:
-        path: "{{ near_data_dir }}"
+        path: "{{ data_dir }}/data"
         state: absent
       notify: restart_service
 
@@ -37,7 +37,7 @@
         cmd: >
           aws s3 --no-sign-request cp --no-sign-request --recursive
           s3://near-protocol-public/backups/mainnet/{{ quicksync_mode }}/$(cat /tmp/latest)
-          {{ near_data_dir }}
+          {{ data_dir }}/data
       become: true
       become_user: "{{ username }}"
       changed_when: false

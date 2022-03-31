@@ -80,7 +80,7 @@
 
 - name: "Ensure permissions of data dir"
   ansible.builtin.file:
-    dest: "{{ chain_data_dir }}"
+    dest: "{{ data_dir }}"
     state: directory
     owner: "{{ username }}"
     mode: "774"

@@ -67,9 +67,9 @@
         remote_src: true
       notify: restart_service
 
-- name: "Ensure creation of near home dir"
+- name: "Ensure creation of data dir"
   ansible.builtin.file:
-    dest: "{{ near_home_dir }}"
+    dest: "{{ data_dir }}"
     state: directory
     owner: "{{ username }}"
     mode: "774"

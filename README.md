@@ -42,7 +42,7 @@ Example setting up Ethereum Full Node with the collection role:
   
   roles:
     - role: trustwallet.blockchain.ethereum
-      chain_data_dir: /mnt/data
+      data_dir: /mnt/data
       geth_config:
         Eth:
           SyncMode: full

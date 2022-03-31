@@ -8,9 +8,9 @@
 
 # Only init once when there is no genesis.json file
 - name: "Init {{ chain_name }} chain"
-  ansible.builtin.command: "{{ chain_bin }} init {{ chain_moniker }} --home={{ chain_data_dir }} --chain-id={{ chain_id }}"
+  ansible.builtin.command: "{{ chain_bin }} init {{ chain_moniker }} --home={{ data_dir }} --chain-id={{ chain_id }}"
   args:
-    creates: "{{ chain_data_dir }}/config/genesis.json"
+    creates: "{{ data_dir }}/config/genesis.json"
   become: true
   become_user: "{{ username }}"
   register: init_result
@@ -19,7 +19,7 @@
 - name: "Download the genesis file (instead default)" # noqa no-handler
   ansible.builtin.get_url:
     url: "{{ chain_genesis_url }}"
-    dest: "{{ chain_data_dir }}/config/genesis.json"
+    dest: "{{ data_dir }}/config/genesis.json"
     owner: "{{ username }}"
     force: true
     mode: "640"
@@ -29,7 +29,7 @@
   ansible.builtin.get_url:
     url: "{{ chain_addrbook_url }}"
     owner: "{{ username }}"
-    dest: "{{ chain_data_dir }}/config/addrbook.json"
+    dest: "{{ data_dir }}/config/addrbook.json"
     mode: "640"
   when:
     - init_result.changed

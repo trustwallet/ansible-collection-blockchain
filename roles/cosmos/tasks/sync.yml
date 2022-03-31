@@ -77,15 +77,15 @@
     name: "{{ chain_daemon_name }}"
     state: stopped
 
-- name: "Delete data dir"
+- name: "Delete inner data dir"
   ansible.builtin.file:
-    path: "{{ chain_data_dir }}/data"
+    path: "{{ data_dir }}/data"
     state: absent
 
 - name: "Extract chain data" # noqa command-instead-of-module
   ansible.builtin.command:
     cmd: "tar -I lz4 -xf {{ quicksync_tmp_dir }}/{{ target_filename }}"
-    chdir: "{{ chain_data_dir }}"
+    chdir: "{{ data_dir }}"
   async: 72000
   poll: 10
   become: true
