@@ -23,12 +23,12 @@ jobs:
 
       - name: Install Ansible package
         run: pip install ansible
-      
+
       - name: Build Ansible Galaxy collection
         id: build
         run: |
           VERSION=$(ansible-galaxy collection build | sed 's/.*-\(.*\)\.tar\.gz/\1/')
           echo "::set-output name=collection-version::$VERSION"
-      
+
       - name: Publish Ansible Galaxy collection
         run: ansible-galaxy collection publish --api-key ${{ secrets.GALAXY_API_KEY }} trustwallet-blockchain-*.tar.gz
