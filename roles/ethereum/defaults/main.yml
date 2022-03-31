@@ -14,11 +14,11 @@ chain_bin: geth
 # <extra_run_args> is an optinal extra flags
 extra_run_args: ""
 
-# <chain_data_dir> is the parametr which allows to override chain data location
-chain_data_dir: "{{ home_dir }}/.ethereum"
+# <data_dir> is the parametr which allows to override chain data location
+data_dir: "{{ home_dir }}/.ethereum"
 
-# <chain_config_dir> is the chain config dir
-chain_config_dir: "{{ chain_data_dir }}"
+# <config_dir> is the chain config dir
+config_dir: "{{ data_dir }}"
 
 # <geth_daemon_name> is the name of the SystemD service file
 geth_daemon_name: gethd
@@ -36,7 +36,7 @@ default_geth_config:
     # light: Downloads all block headers, block data, and verifies some randomly.
     SyncMode: "snap"
   Node:
-    DataDir: "{{ chain_data_dir }}"
+    DataDir: "{{ data_dir }}"
     HTTPHost: "0.0.0.0"
     HTTPPort: 8545
     HTTPVirtualHosts:

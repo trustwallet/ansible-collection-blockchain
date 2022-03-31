@@ -6,16 +6,13 @@ username: near
 home_dir: "/home/{{ username }}"
 
 # <near_version> is the near binary version. When doesn't match, will rebuild binary from sources.
-near_version: 1.24.0
+near_version: 1.25.0
 
 # <near_bin> is the chain executable
 near_bin: /usr/local/bin/neard
 
-# <near_home_dir> is the near home dir
-near_home_dir: "{{ home_dir }}/.near"
-
-# <near_data_dir> is the near data dir
-near_data_dir: "{{ near_home_dir }}/data"
+# <data_dir> is the near data dir
+data_dir: "{{ home_dir }}/.near"
 
 # <near_chain_id> is the near chain id
 near_chain_id: mainnet

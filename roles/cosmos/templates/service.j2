@@ -7,7 +7,7 @@ After=network.target
 [Service]
 Type=simple
 User={{ username }}
-ExecStart={{ bin_dir }}/{{ chain_bin }} start --home {{ chain_data_dir }} {{ extra_run_args }} {{ chain_id }}
+ExecStart={{ bin_dir }}/{{ chain_bin }} start --home {{ data_dir }} {{ extra_run_args }} {{ chain_id }}
 Restart=on-failure
 RestartSec=3
 LimitNOFILE=4096

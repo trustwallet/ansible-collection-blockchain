@@ -40,7 +40,7 @@ then submit a pull request to add the flag to `defaults/main.yml` or
 The execution command is the following:
 
 ```shell
-{{ bin_dir }}/{{ chain_bin }} start --home {{ chain_data_dir }} {{ extra_run_args }}
+{{ bin_dir }}/{{ chain_bin }} start --home {{ data_dir }} {{ extra_run_args }}
 ```
 
 Some Cosmos-SDK based chains accept additional parameters as command-line flags.
@@ -59,16 +59,10 @@ until it is at the current height (we have already set this variable in `vars/te
   roles:
     - role: trustwallet.blockchain.cosmos
       chain_name: osmosis
-      chain_data_dir: /mnt/data/.osmosisd
-      quicksync_mode: default
-      quicksync_tmp_dir: /tmp/sync
+      data_dir: /mnt/data/.osmosisd # example of custom data_dir, default is /home/users/cosmos/.osmosisd
+      quicksync_mode: default # options are pruned, default, archive and none (sync from scratch)
 
 ```
-
-_When Ansible Role targeting an AWS EC2 instance, it might be a good idea to
-change the `chain_data_dir` to target directory at the attached & mounted 
-EBS volume (and ensure the EBS Volume is retained on EC2 Instance termination).
-Attaching and mounting the AWS EBS volume is out of scope of this role._
 
 ## Popular Questions
 

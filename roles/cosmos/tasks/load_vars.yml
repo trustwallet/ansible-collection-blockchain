@@ -24,7 +24,7 @@
   ansible.builtin.set_fact:
     extra_run_args: "{{ extra_run_args | default('') }}"
     chain_bin: "{{ metadata.json.daemon_name }}"
-    chain_data_dir: "{{ chain_data_dir | default(metadata.json.node_home | replace('$HOME', home_dir) ) }}"
+    data_dir: "{{ data_dir | default(metadata.json.node_home | replace('$HOME', home_dir) ) }}"
     chain_genesis_url: "{{ metadata.json.genesis.genesis_url }}"
     chain_id: "{{ metadata.json.chain_id }}"
     chain_peers: "{{ metadata.json.peers.persistent_peers | trustwallet.blockchain.to_cosmos_peers }}"

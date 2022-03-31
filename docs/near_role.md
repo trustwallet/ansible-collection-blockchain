@@ -17,14 +17,9 @@ The role has default variables (see `defaults/main.yml`) which can be adjusted.
   
   roles:
     - role: trustwallet.blockchain.near
-      near_home_dir: /mnt/data/.near
-      quicksync_mode: rpc
+      data_dir: /mnt/data/.near # exampe of non-default data directory, default is /home/users/near/.near
+      quicksync_mode: rpc # options are rpc, archive and none (sync from scratch)
 ```
-
-_When Ansible Role targeting an AWS EC2 instance, it might be a good idea to
-change the `near_home_dir` to target directory at attached & mounted 
-EBS volume (and ensure the EBS Volume is retained on EC2 Instance termination).
-Attaching and mounting the AWS EBS volume is out of scope of this role._
 
 ## Development
 
