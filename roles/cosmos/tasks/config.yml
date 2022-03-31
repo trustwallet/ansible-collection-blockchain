@@ -1,6 +1,6 @@
 ---
 - name: "Set chain configs"
-  set_fact:
+  ansible.builtin.set_fact:
     chain_config_path: "{{ chain_data_dir }}/config/config.toml"
     chain_config_app_path: "{{ chain_data_dir }}/config/app.toml"
 
@@ -51,7 +51,6 @@
   loop:
     - {section: "", option: pruning, value: "\"{{ chain_pruning }}\""}
     - {section: "", option: pruning-keep-recent, value: "\"{{ chain_pruning_keep_recent }}\""}
-    - {section: "", option: pruning-keep-every, value: "\"{{ chain_pruning_keep_every }}\""}
     - {section: "", option: pruning-interval, value: "\"{{ chain_pruning_interval }}\""}
   notify: restart_service
 
@@ -64,7 +63,7 @@
   notify: restart_service
 
 - name: "Include chain tasks only if such exist, otherwise skip the task"
-  include_tasks:
+  ansible.builtin.include_tasks:
     file: "{{ item }}"
   with_first_found:
     - files:

@@ -3,7 +3,7 @@
   hosts: all
   tasks:
     - name: "Include roles/ethereum"
-      include_role:
+      ansible.builtin.include_role:
         name: "roles/ethereum"
       vars:
         ansible_become: true

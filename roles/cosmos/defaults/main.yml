@@ -49,10 +49,6 @@ chain_pruning: default
 # Only applied when chain_pruning is custom.
 chain_pruning_keep_recent: "0"
 
-# <chain_pruning_keep_every> defines each Nth state to keep (e.g. 500).
-# Only applied when chain_pruning is custom.
-chain_pruning_keep_every: "0"
-
 # <chain_pruning_interval> defines the prunning interval (e.g. 10)
 # Only applied when chain_pruning is custom.
 chain_pruning_interval: "0"

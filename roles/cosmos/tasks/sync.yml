@@ -16,11 +16,11 @@
   register: quicksync_target_result
 
 - name: "Set quicksync facts"
-  set_fact:
+  ansible.builtin.set_fact:
     quicksync_target: "{{ quicksync_target_result.stdout | from_json }}"
 
 - name: "Set target url and filename"
-  set_fact:
+  ansible.builtin.set_fact:
     target_url: "{{ quicksync_target_url | default(quicksync_target.url) }}"
     target_filename: "{{ quicksync_target.filename }}"
 
@@ -32,7 +32,7 @@
   when: quicksync_skip_download
 
 - name: "Override target filename (if skip download)"
-  set_fact:
+  ansible.builtin.set_fact:
     target_filename: "{{ local_data.files[0] }}"
   when:
     - quicksync_skip_download
@@ -56,13 +56,14 @@
   ansible.builtin.get_url:
     url: "{{ target_url }}.checksum"
     dest: "{{ quicksync_tmp_dir }}"
+    mode: "755"
   when: not quicksync_skip_download
 
 - name: "Copy checksum tool"
   ansible.builtin.copy:
     src: checksum.sh
     dest: "{{ quicksync_tmp_dir }}"
-    mode: "775"
+    mode: "755"
   when: not quicksync_skip_download
 
 - name: "Checksum downloaded archive"
