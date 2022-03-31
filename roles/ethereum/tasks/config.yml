@@ -1,7 +1,7 @@
 ---
-- name: "Ensure config dir exists"
+- name: "Ensure data dir exists"
   ansible.builtin.file:
-    path: "{{ config_dir }}"
+    path: "{{ data_dir }}"
     owner: "{{ username }}"
     state: directory
     mode: "774"
@@ -13,7 +13,7 @@
 - name: "Copy Geth config in place"
   ansible.builtin.template:
     src: "config.toml.j2"
-    dest: "{{ config_dir }}/config.toml"
+    dest: "{{ data_dir }}/config.toml"
     owner: "{{ username }}"
     mode: "644"
   when:

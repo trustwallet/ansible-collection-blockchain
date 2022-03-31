@@ -16,7 +16,7 @@ when executing the role.
 The execution command is the following:
 
 ```shell
-{{ chain_bin }} --config {{ chain_config_dir }}/config.toml {{ extra_run_args }}
+{{ chain_bin }} --config {{ data_dir }}/config.toml {{ extra_run_args }}
 ```
 
 ## Example Playbook

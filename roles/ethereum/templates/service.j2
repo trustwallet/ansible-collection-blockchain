@@ -7,7 +7,7 @@ After=network.target
 [Service]
 Type=simple
 User={{ username }}
-ExecStart={{ chain_bin }} --config {{ chain_config_dir }}/config.toml {{ extra_run_args }}
+ExecStart={{ chain_bin }} --config {{ data_dir }}/config.toml {{ extra_run_args }}
 Restart=on-failure
 RestartSec=3
 LimitNOFILE=65535
