@@ -30,7 +30,6 @@
       ansible.builtin.file:
         path: "{{ data_dir }}/data"
         state: absent
-      notify: restart_service
 
     - name: "Download latest data"
       ansible.builtin.shell:
@@ -38,6 +37,9 @@
           aws s3 --no-sign-request cp --no-sign-request --recursive
           s3://near-protocol-public/backups/mainnet/{{ quicksync_mode }}/$(cat /tmp/latest)
           {{ data_dir }}/data
+      async: 72000
+      poll: 10
       become: true
       become_user: "{{ username }}"
       changed_when: false
+      notify: restart_service
