@@ -34,7 +34,7 @@
     - name: "Download latest data"
       ansible.builtin.shell:
         cmd: >
-          aws s3 --no-sign-request cp --no-sign-request --recursive
+          aws s3 --no-sign-request cp --no-sign-request --recursive --no-progress
           s3://near-protocol-public/backups/mainnet/{{ quicksync_mode }}/$(cat /tmp/latest)
           {{ data_dir }}/data
       async: 72000
