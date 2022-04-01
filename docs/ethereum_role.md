@@ -28,7 +28,7 @@ The execution command is the following:
   
   roles:
     - role: trustwallet.blockchain.ethereum
-      data_dir: /mnt/data # example of custom data dir, default is /home/users/.ethereum
+      data_dir: /mnt/data # example of custom data dir, default is /home/geth/.ethereum
       geth_config:
         Eth:
           SyncMode: full
