@@ -59,7 +59,7 @@ until it is at the current height (we have already set this variable in `vars/te
   roles:
     - role: trustwallet.blockchain.cosmos
       chain_name: osmosis
-      data_dir: /mnt/data/.osmosisd # example of custom data_dir, default is /home/users/cosmos/.osmosisd
+      data_dir: /mnt/data/.osmosisd # example of custom data_dir, default is /home/cosmos/.osmosisd
       quicksync_mode: default # options are pruned, default, archive and none (sync from scratch)
 
 ```

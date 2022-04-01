@@ -17,7 +17,7 @@ The role has default variables (see `defaults/main.yml`) which can be adjusted.
   
   roles:
     - role: trustwallet.blockchain.near
-      data_dir: /mnt/data/.near # exampe of non-default data directory, default is /home/users/near/.near
+      data_dir: /mnt/data/.near # exampe of non-default data directory, default is /home/near/.near
       quicksync_mode: rpc # options are rpc, archive and none (sync from scratch)
 ```
 

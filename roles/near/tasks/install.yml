@@ -45,14 +45,14 @@
     - name: "Git checkout"
       ansible.builtin.git:
         repo: https://github.com/near/nearcore
-        dest: /tmp/nearcore
+        dest: "{{ checkout_dir }}"
         version: "{{ near_version }}"
         force: true
 
     - name: "Compile nearcore binary" # noqa no-changed-when
       ansible.builtin.shell:
         cmd: source ~/.cargo/env && make release
-        chdir: /tmp/nearcore
+        chdir: "{{ checkout_dir }}"
         executable: /bin/bash
       changed_when: false
       async: 72000
@@ -60,7 +60,7 @@
 
     - name: "Copy compiled binary to bin folder"
       ansible.builtin.copy:
-        src: "/tmp/nearcore/target/release/neard"
+        src: "{{ checkout_dir }}/target/release/neard"
         dest: "{{ near_bin }}"
         owner: "{{ username }}"
         mode: "775"
