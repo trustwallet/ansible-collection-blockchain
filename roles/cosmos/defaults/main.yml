@@ -27,8 +27,8 @@ chain_name: ""
 # e.g. chain_bin_url: https://github.com/osmosis-labs/osmosis/releases/download/v6.1.0/osmosisd-6.1.0-linux-amd64
 
 # <data_dir> is the parametr which allows to override chain data location (--home flag).
-# By default equals node_home value from chain registry (e.g. $HOME/.osmosis)
-# e.g. data_dir: /mnt/data/.osmosis
+# By default equals node_home value from chain registry (e.g. /home/cosmos/.osmosisd)
+# e.g. data_dir: /mnt/data/.osmosisd
 
 # <chain_minimum_gas_prices> defines minimum transaction fee
 # it is recommended to set this parameter
