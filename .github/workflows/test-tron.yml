@@ -41,6 +41,11 @@ jobs:
       - run: pip install -r requirements.txt
         if: steps.cache.outputs.cache-hit != 'true'
 
+      # tron role has dependency during testing with Molecule which is not resolved
+      # for some reason --role-path specified during molecule run is not used during prepare play
+      # maybe it's a molecule-ec2 package issue
+      - run: ansible-galaxy role install -vr requirements.yml
+
       - name: Test role with Molecule
         if: github.repository_owner == 'trustwallet'
         run: molecule -v test -s $MOLECULE_SCENARIO

@@ -3,9 +3,6 @@
   hosts: all
   gather_facts: true
 
-  collections:
-    - lean_delivery.java
-
   roles:
     - role: lean_delivery.java
       java_distribution: corretto
