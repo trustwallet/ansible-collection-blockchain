@@ -1,0 +1,16 @@
+---
+- name: Prepare
+  hosts: all
+  gather_facts: false
+  
+  roles:
+    - role: lean_delivery.java
+      java_distribution: corretto
+      java_major_version: 8
+
+  tasks:
+    - name: "Make sure python3 is installed"
+      ansible.builtin.package:
+        name: python3
+        state: present
+      become: true

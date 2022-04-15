@@ -6,15 +6,15 @@ on:
     branches:
       - main
     paths:
-      - roles/cosmos/**
-      - molecule/cosmos/**
+      - roles/tron/**
+      - molecule/tron/**
 
 permissions:
   id-token: write
   contents: read
 
 env:
-  MOLECULE_SCENARIO: cosmos
+  MOLECULE_SCENARIO: tron
 
 jobs:
   ansible-galaxy:
@@ -52,4 +52,3 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION }}
           MOLECULE_VPC_SUBNET_ID: ${{ secrets.MOLECULE_VPC_SUBNET_ID }}
           MOLECULE_IMAGE: ${{ secrets.MOLECULE_IMAGE }}
-          COSMOS_CHAIN_NAME: osmosis

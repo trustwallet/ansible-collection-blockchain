@@ -1,0 +1,8 @@
+---
+- name: "Restart trond service"
+  ansible.builtin.systemd:
+    name: "{{ tron_daemon_name }}"
+    state: restarted
+    daemon_reload: true
+    enabled: true
+  listen: restart_service

@@ -4,6 +4,9 @@
   tasks:
     - name: "Include roles/ethereum"
       ansible.builtin.include_role:
-        name: "roles/ethereum"
+        name: roles/ethereum
       vars:
         ansible_become: true
+        geth_config:
+          Eth:
+            SyncMode: full

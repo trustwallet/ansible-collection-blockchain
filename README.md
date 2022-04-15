@@ -13,6 +13,7 @@ List of the collection roles:
 * [trustwallet.blockchain.cosmos](./roles/cosmos/) - All Cosmos-SDK based blockchains with Cosmovisor
 * [trustwallet.blockchain.ethereum](./roles/ethereum/) - Ethereum blockchain with Geth
 * [trustwallet.blockchain.near](./roles/near/) - NEAR blockchain
+* [trustwallet.blockchain.tron](./roles/tron/) - TRON blockchain
 * _...more are coming_
 
 ## Ansible Collection Usage
@@ -73,7 +74,8 @@ It's recommended to develop inside [Virtual environment](https://virtualenv.pypa
 ```shell
 virtualenv -p python3 venv
 source venv/bin/activate
-pip install -r molecule/requirements.txt
+pip install -r requirements.txt
+ansible-galaxy install -r requirements.yml
 ```
 
 Provide AWS credentials to allow Molecule provision ephemeral EC2 instance.
@@ -138,7 +140,7 @@ The `trustwallet-blockchain-x.x.x.tar.gz` file will appear at the root of the pr
 It can be installed for local testing by executing the following command:
 
 ```sh
-ansible-galaxy collection install trustwallet-blockchain-0.2.0.tar.gz --force
+ansible-galaxy collection install trustwallet-blockchain-0.3.3.tar.gz --force
 ```
 
 ## References

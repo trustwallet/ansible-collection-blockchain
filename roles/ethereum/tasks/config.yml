@@ -12,7 +12,7 @@
 
 - name: "Copy Geth config in place"
   ansible.builtin.template:
-    src: "config.toml.j2"
+    src: config.toml.j2
     dest: "{{ data_dir }}/config.toml"
     owner: "{{ username }}"
     mode: "644"
