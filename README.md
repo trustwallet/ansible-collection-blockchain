@@ -10,10 +10,10 @@ type is required.
 
 List of the collection roles:
 
-* [trustwallet.blockchain.cosmos](./roles/cosmos/) - All Cosmos-SDK based blockchains with Cosmovisor
-* [trustwallet.blockchain.ethereum](./roles/ethereum/) - Ethereum blockchain with Geth
-* [trustwallet.blockchain.near](./roles/near/) - NEAR blockchain
-* [trustwallet.blockchain.tron](./roles/tron/) - TRON blockchain
+* [trustwallet.blockchain.cosmos](https://github.com/trustwallet/ansible-collection-blockchain/tree/main/roles/cosmos) - All Cosmos-SDK based blockchains
+* [trustwallet.blockchain.ethereum](https://github.com/trustwallet/ansible-collection-blockchain/tree/main/roles/ethereum) - Ethereum blockchain with Geth
+* [trustwallet.blockchain.near](https://github.com/trustwallet/ansible-collection-blockchain/tree/main/roles/near) - NEAR blockchain
+* [trustwallet.blockchain.tron](https://github.com/trustwallet/ansible-collection-blockchain/tree/main/roles/tron) - TRON blockchain
 * _...more are coming_
 
 ## Ansible Collection Usage
