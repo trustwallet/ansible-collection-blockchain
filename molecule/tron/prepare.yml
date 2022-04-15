@@ -2,7 +2,7 @@
 - name: Prepare
   hosts: all
   gather_facts: false
-  
+
   roles:
     - role: lean_delivery.java
       java_distribution: corretto
