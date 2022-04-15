@@ -24,6 +24,12 @@
     target_url: "{{ quicksync_target_url | default(quicksync_target.url) }}"
     target_filename: "{{ quicksync_target.filename }}"
 
+- name: "Ensure download dir permissions"
+  ansible.builtin.file:
+    dest: "{{ quicksync_tmp_dir }}"
+    state: directory
+    mode: "777"
+
 - name: "Find downloaded data archive (if skip download)"
   ansible.builtin.find:
     paths: "{{ quicksync_tmp_dir }}"
@@ -37,12 +43,6 @@
   when:
     - quicksync_skip_download
     - local_data.files | length > 0
-
-- name: "Ensure download dir permissions"
-  ansible.builtin.file:
-    dest: "{{ quicksync_tmp_dir }}"
-    state: directory
-    mode: "777"
 
 - name: "Download chain data archive"
   ansible.builtin.shell:

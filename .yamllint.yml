@@ -2,6 +2,7 @@
 extends: default
 ignore: |
   **/lib/
+  **/.ansible/
 rules:
   braces:
     min-spaces-inside: 0

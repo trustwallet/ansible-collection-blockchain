@@ -8,15 +8,15 @@
 
 - name: "Set final geth config"
   ansible.builtin.set_fact:
-    geth_config: "{{ default_geth_config | combine(geth_config, recursive=true) }}"
+    final_geth_config: "{{ default_geth_config | combine(geth_config, recursive=true) }}"
 
 - name: "Copy Geth config in place"
   ansible.builtin.template:
-    src: "config.toml.j2"
+    src: config.toml.j2
     dest: "{{ data_dir }}/config.toml"
     owner: "{{ username }}"
     mode: "644"
   when:
-    - geth_config is defined
-    - geth_config.keys() | length > 0
+    - final_geth_config is defined
+    - final_geth_config.keys() | length > 0
   notify: restart_service

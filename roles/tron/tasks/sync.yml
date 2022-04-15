@@ -1,0 +1,87 @@
+---
+# https://stackoverflow.com/a/56379678/166473
+- name: "Install acl package"
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 86400
+    pkg: acl
+
+- name: "Check TRON data directory was initialised"
+  ansible.builtin.stat:
+    path: "{{ data_dir }}/output-directory"
+  register: tron_data_stat
+
+- name: "Download chain data"
+  when:
+    - not tron_data_stat.stat.exists or quicksync_force
+    - quicksync_enabled
+  block:
+    - name: "Install apt packages"
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 86400
+        pkg: aria2
+
+    - name: "Get download target" # noqa command-instead-of-module
+      ansible.builtin.command:
+        cmd: "curl {{ quicksync_endpoints_json_url }}"
+      changed_when: false
+      register: quicksync_targets_result
+
+    - name: "Set quicksync facts"
+      ansible.builtin.set_fact:
+        quicksync_targets: "{{ quicksync_targets_result.stdout | from_json }}"
+
+    - name: "Set target url and filename"
+      ansible.builtin.set_fact:
+        target_url: "{{ quicksync_targets[quicksync_mirror]['endpoint'] }}"
+        target_filename: "{{ quicksync_targets[quicksync_mirror]['files'][0]['name'][0] }}"
+
+    - name: "Ensure download dir permissions"
+      ansible.builtin.file:
+        dest: "{{ quicksync_tmp_dir }}"
+        state: directory
+        mode: "777"
+
+    - name: "Find downloaded data archive (if skip download)"
+      ansible.builtin.find:
+        paths: "{{ quicksync_tmp_dir }}"
+        patterns: "*.tgz"
+      register: local_data
+      when: quicksync_skip_download
+
+    - name: "Override target filename (if skip download)"
+      ansible.builtin.set_fact:
+        target_filename: "{{ local_data.files[0] }}"
+      when:
+        - quicksync_skip_download
+        - local_data.files | length > 0
+
+    - name: "Download chain data archive"
+      ansible.builtin.shell:
+        cmd: "aria2c --continue --max-connection-per-server={{ quicksync_connection_num }} {{ target_url }}/{{ target_filename }} > aria.log"
+        chdir: "{{ quicksync_tmp_dir }}"
+      async: 72000
+      poll: 10
+      when: not quicksync_skip_download
+
+    - name: "Stop service (if running)"
+      ansible.builtin.systemd:
+        name: "{{ tron_daemon_name }}"
+        state: stopped
+
+    - name: "Delete inner data dir"
+      ansible.builtin.file:
+        path: "{{ data_dir }}/output-directory"
+        state: absent
+      notify: restart_service
+
+    - name: "Extract chain data" # noqa command-instead-of-module
+      ansible.builtin.command:
+        cmd: "tar -xf {{ quicksync_tmp_dir }}/{{ target_filename }}"
+        chdir: "{{ data_dir }}"
+      async: 72000
+      poll: 10
+      become: true
+      become_user: "{{ username }}"
+      changed_when: false

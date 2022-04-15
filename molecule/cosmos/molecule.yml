@@ -6,12 +6,13 @@ driver:
 lint: |
   set -e
   yamllint .
-  ansible-lint
+  ansible-lint .
 platforms:
   - name: instance
     image: ${MOLECULE_IMAGE}
     instance_type: t3.medium
     vpc_subnet_id: ${MOLECULE_VPC_SUBNET_ID}
+    boot_wait_seconds: 10
     volumes:
       - device_name: /dev/sda1
         ebs:

@@ -1,0 +1,38 @@
+---
+- name: "Install apt packages"
+  ansible.builtin.apt:
+    pkg: libgoogle-perftools4
+    cache_valid_time: 3600
+    update_cache: true
+
+- name: "Create user {{ username }}"
+  ansible.builtin.user:
+    name: "{{ username }}"
+
+- name: "Calculate heap size"
+  set_fact:
+    tron_heap_size: "{{ (ansible_memtotal_mb / 1024 * 0.8) | round(0, 'floor') | int }}"
+
+- name: "Create systemd service file"
+  ansible.builtin.template:
+    src: templates/service.j2
+    dest: "/etc/systemd/system/{{ tron_daemon_name }}.service"
+    mode: "644"
+  notify: restart_service
+
+- name: "Ensure creation of data dir"
+  ansible.builtin.file:
+    dest: "{{ data_dir }}"
+    state: directory
+    owner: "{{ username }}"
+    mode: "774"
+
+- name: "Download FullNode.jar"
+  ansible.builtin.get_url:
+    url: "{{ tron_jar_url }}"
+    checksum: "sha256:{{ tron_checksum_url }}"
+    force: true
+    dest: "{{ tron_jar }}"
+    owner: "{{ username }}"
+    mode: "755"
+  notify: restart_service

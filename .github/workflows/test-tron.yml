@@ -1,20 +1,20 @@
 ---
-name: Test Cosmos role (osmosis)
+name: Test TRON role
 
 on:
   pull_request:
     branches:
       - main
     paths:
-      - roles/cosmos/**
-      - molecule/cosmos/**
+      - roles/tron/**
+      - molecule/tron/**
 
 permissions:
   id-token: write
   contents: read
 
 env:
-  MOLECULE_SCENARIO: cosmos
+  MOLECULE_SCENARIO: tron
 
 jobs:
   ansible-galaxy:
@@ -41,9 +41,10 @@ jobs:
       - run: pip install -r requirements.txt
         if: steps.cache.outputs.cache-hit != 'true'
 
-      # cosmos role is using the collection plugin
-      - run: ansible-galaxy collection build
-      - run: find trustwallet-blockchain-* | xargs ansible-galaxy collection install
+      # tron role has dependency during testing with Molecule which is not resolved
+      # for some reason --role-path specified during molecule run is not used during prepare play
+      # maybe it's a molecule-ec2 package issue
+      - run: ansible-galaxy role install -vr requirements.yml
 
       - name: Test role with Molecule
         if: github.repository_owner == 'trustwallet'
@@ -52,4 +53,3 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION }}
           MOLECULE_VPC_SUBNET_ID: ${{ secrets.MOLECULE_VPC_SUBNET_ID }}
           MOLECULE_IMAGE: ${{ secrets.MOLECULE_IMAGE }}
-          COSMOS_CHAIN_NAME: osmosis

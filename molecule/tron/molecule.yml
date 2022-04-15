@@ -10,17 +10,22 @@ lint: |
 platforms:
   - name: instance
     image: ${MOLECULE_IMAGE}
-    instance_type: t3.medium
+    instance_type: c5.2xlarge
     vpc_subnet_id: ${MOLECULE_VPC_SUBNET_ID}
     boot_wait_seconds: 10
+    volumes:
+      - device_name: /dev/sda1
+        ebs:
+          volume_size: 80
+          delete_on_termination: true
     tags:
-      Name: molecule-ethereum
+      Name: molecule-tron
 provisioner:
   name: ansible
 verifier:
   name: testinfra
 scenario:
-  name: ethereum
+  name: tron
   create_sequence:
     - create
     - prepare
@@ -44,6 +49,5 @@ scenario:
     - create
     - prepare
     - converge
-    - idempotence
     - verify
     - destroy

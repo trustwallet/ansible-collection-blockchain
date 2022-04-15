@@ -1,0 +1,54 @@
+---
+# <username> is the non-root user under which daemon will operate
+username: tron
+
+# <home_dir> is a user home dir
+home_dir: "/home/{{ username }}"
+
+# <tron_version> is the tron binary version
+tron_version: 4.4.4
+
+# <tron_jar_url> is the URL to download TRON FullNode.jar
+tron_jar_url: "https://github.com/tronprotocol/java-tron/releases/download/GreatVoyage-v{{ tron_version }}/FullNode.jar"
+
+# <tron_checksum_url> is the URL to check TRON FullNode.jar checksum
+tron_checksum_url: "https://github.com/tronprotocol/java-tron/releases/download/GreatVoyage-v{{ tron_version }}/sha256sum.txt"
+
+# <data_dir> is the tron data dir
+data_dir: "{{ home_dir }}/.tron"
+
+# <tron_jar> is the chain main Java Archive file
+tron_jar: "{{ data_dir }}/FullNode.jar"
+
+# <tron_daemon_name> defines SystemD service name
+tron_daemon_name: trond
+
+# <quicksync_endpoints_json_url> is the URL containing endoints to latest TRON state files
+quicksync_endpoints_json_url: https://backup.trongrid.io/get-files
+
+# <quicksync_mirror> options are oregon (default), frankfurt and singapore
+quicksync_mirror: oregon
+
+# <quicksync_connection_num> is the maximum number of connections to the server for each download.
+quicksync_connection_num: 5
+
+# <quicksync_enabled> indicates whether chain backup sync is enabled.
+quicksync_enabled: true
+
+# <quicksync_skip_download> skips steps to download quicksync chain data archive,
+# assuming that the file has been already downloaded.
+quicksync_skip_download: false
+
+# <quicksync_force> forces the chain data download step.
+# Warning, the content of the internal data dir will be wiped.
+# By default chain data will be downloaded only after initial install.
+quicksync_force: false
+
+# <quicksync_tmp_dir> is the temporary dir to keep downloaded file.
+# The aria2c package is utilized to speed up download process,
+# but it requires double size to first download and then unpack data archive.
+# In cloud environment the download dir often points to temporary mounted drive.
+quicksync_tmp_dir: /tmp/quicksync
+
+# <tron_config_override> is an optional path to modified main_net_config.conf
+# tron_config_override: ./config/main_net_config.conf

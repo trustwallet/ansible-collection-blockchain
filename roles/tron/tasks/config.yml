@@ -1,0 +1,27 @@
+---
+- name: "Copy main net config"
+  ansible.builtin.copy:
+    content: "{{ lookup('file', tron_config_override | default('main_net_config.conf') ) }}"
+    dest: "{{ data_dir }}/main_net_config.conf"
+    owner: "{{ username }}"
+    mode: "644"
+  notify: restart_service
+
+# - name: "Load main net config to var"
+#   ansible.builtin.set_fact:
+#     main_net_config: "{{ lookup('file', 'main_net_config.conf') | trustwallet.blockchain.from_hocon }}"
+
+# - name: "Combine main net config with overrides"
+#   ansible.builtin.set_fact:
+#     main_net_config: "{{ main_net_config | combine(tron_config, recursive=true) }}"
+#   when:
+#     - tron_config is defined
+#     - tron_config.keys() | length > 0
+
+# - name: "Write main net config to file"
+#   ansible.builtin.copy:
+#     content: "{{ main_net_config | trustwallet.blockchain.to_hocon }}"
+#     dest: "{{ data_dir }}/main_net_config.conf"
+#     owner: "{{ username }}"
+#     mode: "644"
+#   notify: restart_service
