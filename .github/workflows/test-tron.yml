@@ -1,5 +1,5 @@
 ---
-name: Test Cosmos role (osmosis)
+name: Test TRON role
 
 on:
   pull_request:
@@ -40,10 +40,6 @@ jobs:
             ${{ runner.os }}-pip-
       - run: pip install -r requirements.txt
         if: steps.cache.outputs.cache-hit != 'true'
-
-      # cosmos role is using the collection plugin
-      - run: ansible-galaxy collection build
-      - run: find trustwallet-blockchain-* | xargs ansible-galaxy collection install
 
       - name: Test role with Molecule
         if: github.repository_owner == 'trustwallet'
