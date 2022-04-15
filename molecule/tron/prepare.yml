@@ -1,7 +1,10 @@
 ---
 - name: Prepare
   hosts: all
-  gather_facts: false
+  gather_facts: true
+
+  collections:
+    - lean_delivery.java
 
   roles:
     - role: lean_delivery.java

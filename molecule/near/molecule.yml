@@ -12,6 +12,7 @@ platforms:
     image: ${MOLECULE_IMAGE}
     instance_type: c5.2xlarge
     vpc_subnet_id: ${MOLECULE_VPC_SUBNET_ID}
+    boot_wait_seconds: 10
     volumes:
       - device_name: /dev/sda1
         ebs:
