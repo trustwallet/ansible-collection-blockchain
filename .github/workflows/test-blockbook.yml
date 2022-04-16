@@ -1,5 +1,5 @@
 ---
-name: Test Cosmos role (osmosis)
+name: Test Blockbook role (firo)
 
 on:
   pull_request:
