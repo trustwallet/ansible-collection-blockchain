@@ -1,5 +1,7 @@
 ---
 roles:
+  - name: gantsign.golang
+  - name: geerlingguy.docker
   - name: lean_delivery.java
 collections:
   - name: amazon.aws

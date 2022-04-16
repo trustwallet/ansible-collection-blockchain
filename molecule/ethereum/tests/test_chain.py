@@ -10,8 +10,8 @@ def test_geth_is_installed(host):
 
 def test_gethd_running_and_enabled(host):
     s = host.service('gethd')
-    assert s.is_running
     assert s.is_enabled
+    assert s.is_running
 
 def test_http_is_listening(host):
     s = host.socket("tcp://0.0.0.0:8545")

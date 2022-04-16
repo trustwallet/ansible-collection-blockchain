@@ -1,0 +1,12 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+  remote_user: admin
+
+  tasks:
+    - name: "Include roles/blockbook"
+      ansible.builtin.include_role:
+        name: roles/blockbook
+      vars:
+        chain_name: "{{ lookup('env', 'BLOCKBOOK_CHAIN_NAME') }}"

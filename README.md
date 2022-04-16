@@ -14,6 +14,7 @@ List of the collection roles:
 * [trustwallet.blockchain.ethereum](https://github.com/trustwallet/ansible-collection-blockchain/tree/main/roles/ethereum) - Ethereum blockchain with Geth
 * [trustwallet.blockchain.near](https://github.com/trustwallet/ansible-collection-blockchain/tree/main/roles/near) - NEAR blockchain
 * [trustwallet.blockchain.tron](https://github.com/trustwallet/ansible-collection-blockchain/tree/main/roles/tron) - TRON blockchain
+* [trustwallet.blockchain.blockbook](https://github.com/trustwallet/ansible-collection-blockchain/tree/main/roles/blockbook) - Blockbook supported blockchains
 * _...more are coming_
 
 ## Ansible Collection Usage
@@ -92,7 +93,8 @@ Also provide the target region, image AMI and VPC subnet identifier
 ```shell
 export AWS_REGION=us-east-1
 export MOLECULE_VPC_SUBNET_ID=subnet-...
-export MOLECULE_IMAGE=ami-...
+export MOLECULE_IMAGE=ami-... # ubuntu
+export MOLECULE_IMAGE_DEBIAN=ami-... # debian for blockbook 
 ```
 
 For each role there is a `/molecule/<role>` directory with configuration files.
@@ -140,7 +142,7 @@ The `trustwallet-blockchain-x.x.x.tar.gz` file will appear at the root of the pr
 It can be installed for local testing by executing the following command:
 
 ```sh
-ansible-galaxy collection install trustwallet-blockchain-0.3.3.tar.gz --force
+ansible-galaxy collection install trustwallet-blockchain-0.3.4.tar.gz --force
 ```
 
 ## References

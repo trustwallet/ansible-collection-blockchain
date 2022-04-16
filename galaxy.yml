@@ -1,7 +1,7 @@
 ---
 namespace: trustwallet
 name: blockchain
-version: 0.3.3
+version: 0.3.4
 readme: README.md
 authors:
   - vorotech
@@ -15,6 +15,7 @@ tags:
   - cosmos
   - near
   - tron
+  - blockbook
 dependencies:
   community.general: ">=4.2.0"
 repository: https://github.com/trustwallet/ansible-collection-blockchain
