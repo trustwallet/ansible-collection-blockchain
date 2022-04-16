@@ -1,0 +1,23 @@
+---
+# <chain_name> defines the a supporter Blockbook chain to init
+# Requred to be set in role vars.
+chain_name: ""
+
+blockbook_checkout_dir: "/tmp/blockbook"
+
+base_dir: "/opt/coins"
+
+# <data_dir> is the parametr which allows to override chain data location
+data_dir: "{{ base_dir }}/data"
+
+chain_backend_dir: "{{ data_dir }}/{{ chain_name }}/backend"
+
+blockbook_version: 0.3.5
+
+blockbook_vars_file: configs/environ.json
+
+backend_vars_file: "configs/coins/{{ chain_name }}.json"
+
+backend_service: "backend-{{ chain_name }}.service"
+
+blockbook_service: "blockbook-{{ chain_name }}.service"

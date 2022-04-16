@@ -3,16 +3,16 @@
   hosts: all
   gather_facts: true
   become: true
+  remote_user: admin
 
   pre_tasks:
-    - name: "Check COSMOS_CHAIN_NAME env var is set"
+    - name: "Check BLOCKBOOK_CHAIN_NAME env var is set"
       ansible.builtin.assert:
-        that: lookup('env', 'COSMOS_CHAIN_NAME') | default("") | length > 0
+        that: lookup('env', 'BLOCKBOOK_CHAIN_NAME') | default("") | length > 0
 
     - name: "Make sure python3 is installed"
       ansible.builtin.package:
         name: python3
 
   roles:
-    - roles: gantsign.golang
-      golang_version: "1.18.1"
+    - role: geerlingguy.docker

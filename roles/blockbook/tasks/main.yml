@@ -1,0 +1,64 @@
+---
+- name: "Install apt packages"
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 86400
+    pkg:
+      - make
+
+- name: "Git checkout"
+  ansible.builtin.git:
+    repo: https://github.com/trezor/blockbook
+    dest: "{{ blockbook_checkout_dir }}"
+    force: true
+
+- name: "Override blockbook config"
+  ansible.builtin.template:
+    src: "templates/environ.json.j2"
+    dest: "{{ blockbook_checkout_dir }}/{{ blockbook_vars_file }}"
+    mode: "644"
+
+- name: "Ensure data directory exist"
+  ansible.builtin.file:
+    path: "{{ chain_backend_dir }}"
+    state: directory
+
+- name: "Read {{ chain_name }} backend package vars"
+  ansible.builtin.shell: "cat {{ blockbook_checkout_dir }}/{{ backend_vars_file }}"
+  register: backend_vars_result
+
+- name: "Parse backend vars"
+  set_fact:
+    backend_vars: "{{ backend_vars_result.stdout | from_json }}"
+
+- name: "Make {{ chain_name }} packages"
+  ansible.builtin.shell:
+    cmd: "make all-{{ chain_name }}"
+    chdir: "{{ blockbook_checkout_dir }}"
+    creates: "{{ blockbook_checkout_dir }}/build/backend-{{ chain_name }}_{{ backend_vars.backend.version }}-{{ backend_vars.backend.package_revision }}_amd64.deb"
+
+- name: "Install {{ chain_name }} backend package"
+  ansible.builtin.shell:
+    cmd: "apt install ./backend-{{ chain_name }}_{{ backend_vars.backend.version }}-{{ backend_vars.backend.package_revision }}_amd64.deb -y"
+    chdir: "{{ blockbook_checkout_dir }}/build"
+  changed_when: false
+
+- name: "Enable and start {{ chain_name }} backend service"
+  ansible.builtin.systemd:
+    name: "{{ backend_service }}"
+    state: restarted
+    daemon_reload: true
+    enabled: true
+
+- name: "Install {{ chain_name }} blockbook package"
+  ansible.builtin.shell:
+    cmd: "apt install ./blockbook-{{ chain_name }}_{{ blockbook_version }}_amd64.deb -y"
+    chdir: "{{ blockbook_checkout_dir }}/build"
+  changed_when: false
+
+- name: "Enable and start {{ coin }} blockbook service"
+  ansible.builtin.systemd:
+    name: "{{ blockbook_service }}"
+    state: restarted
+    daemon_reload: true
+    enabled: true

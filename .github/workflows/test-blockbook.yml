@@ -1,20 +1,20 @@
 ---
-name: Test TRON role
+name: Test Blockbook role (firo)
 
 on:
   pull_request:
     branches:
       - main
     paths:
-      - roles/tron/**
-      - molecule/tron/**
+      - roles/blockbook/**
+      - molecule/blockbook/**
 
 permissions:
   id-token: write
   contents: read
 
 env:
-  MOLECULE_SCENARIO: tron
+  MOLECULE_SCENARIO: blockbook
 
 jobs:
   ansible-galaxy:
@@ -52,4 +52,5 @@ jobs:
         env:
           AWS_REGION: ${{ secrets.AWS_REGION }}
           MOLECULE_VPC_SUBNET_ID: ${{ secrets.MOLECULE_VPC_SUBNET_ID }}
-          MOLECULE_IMAGE: ${{ secrets.MOLECULE_IMAGE }}
+          MOLECULE_IMAGE_DEBIAN: ${{ secrets.MOLECULE_IMAGE_DEBIAN }}
+          BLOCKBOOK_CHAIN_NAME: firo

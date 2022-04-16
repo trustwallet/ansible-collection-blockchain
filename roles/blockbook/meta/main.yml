@@ -1,0 +1,15 @@
+---
+galaxy_info:
+  author: vorotech
+  description: Ansible role to manage Blockbook supporter blockchains
+  company: Trust Wallet
+  license: MIT
+  min_ansible_version: 2.10.6
+  platforms:
+    - name: Debian
+      versions:
+        - all
+  galaxy_tags:
+    - blockchain
+    - blockbook
+dependencies: []
