@@ -14,5 +14,5 @@
         name: python3
 
   roles:
-    - roles: gantsign.golang
+    - role: gantsign.golang
       golang_version: "1.18.1"
