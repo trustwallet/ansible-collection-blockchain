@@ -2,7 +2,7 @@
 
 :shield: Trust Wallet is a most trusted & secure non-custodial crypto wallet.
 
-The Trust Wallet's Ansible Collection contains roles to configure blockchain nodes.
+The Trust Wallet's Ansible Galaxy collection of roles to configure blockchain nodes.
 
 NOTE: These roles set up non-validator nodes. Please check the requirements and 
 an additional configuration at the chain's documentation if the validator or other node
