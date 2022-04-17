@@ -21,11 +21,11 @@ Tip: Golang can be installed with Ansible Galaxy [gantsign.golang](https://galax
 
 The role loads the variables in the following order:
 
-:arrow_down: Role defaults `defaults/main.yml`
-:arrow_down: Role chain variables `vars/<chain>.yml` (optional)
-:arrow_down: Playbook `vars`
-:arrow_down: Role `vars`
-:arrow_down: Role parameters
+:arrow_down: Role defaults `defaults/main.yml`  
+:arrow_down: Role chain variables `vars/<chain>.yml` (optional)  
+:arrow_down: Playbook `vars`  
+:arrow_down: Role `vars`  
+:arrow_down: Role parameters  
 
 As noted, the Cosmos-SDK based chain might have optional variables file
 (e.g. `vars/osmosis.yml`) to override certain config variables.
