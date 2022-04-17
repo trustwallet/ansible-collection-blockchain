@@ -2,6 +2,20 @@
 
 Ansible role to manage TRON blockchain node.
 
+## Requirements
+
+The TRON blockchain Java Archive can be launched on many operating systems.
+Check the project's GitHub repository to see the instructions for the
+operating system of your choice. But this role only targeting the Linux/Unix 
+based OS.
+
+### JDK 8
+
+This role requires the compatible Java runtime to be installed and assume it is present in the system.
+We've found that Amazon Corretto, production-ready distribution of OpenJDK, does the job well.
+
+Tip: JDK can be installed with Ansible Galaxy [lean_delivery.java](https://galaxy.ansible.com/lean_delivery/java) role or similar.
+
 ## Role Variables
 
 The role has default variables (see `defaults/main.yml`) which can be adjusted.

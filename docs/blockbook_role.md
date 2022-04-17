@@ -10,7 +10,7 @@ Officially supported platform is Debian Linux and AMD64 architecture.
 
 This role doesn't attempt to install the Docker CE, but assumes it is available.
 
-Tip: Docker can be installed with Ansible Galaxy (geerlingguy.docker)[https://galaxy.ansible.com/geerlingguy/docker] role or similar.
+Tip: Docker can be installed with Ansible Galaxy [geerlingguy.docker](https://galaxy.ansible.com/geerlingguy/docker) role or similar.
 
 ## Role Variables
 

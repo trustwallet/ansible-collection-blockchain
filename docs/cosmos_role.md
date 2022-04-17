@@ -15,7 +15,7 @@ This role doesn't attempt to install the golang, but assumes it is available
 at the default location `/usr/local/go/bin`. The default location can be overridden
 with the `golang_bin_dir` variable when executing the role.
 
-Tip: Golang can be installed with Ansible Galaxy (gantsign.golang)[https://galaxy.ansible.com/gantsign/golang] role or similar.
+Tip: Golang can be installed with Ansible Galaxy [gantsign.golang](https://galaxy.ansible.com/gantsign/golang) role or similar.
 
 ### Role Variables
 
