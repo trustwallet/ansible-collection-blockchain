@@ -57,20 +57,26 @@
     url: "{{ target_url }}.checksum"
     dest: "{{ quicksync_tmp_dir }}"
     mode: "755"
-  when: not quicksync_skip_download
+  when:
+    - not quicksync_skip_download
+    - not quicksync_skip_checksum
 
 - name: "Copy checksum tool"
   ansible.builtin.copy:
     src: checksum.sh
     dest: "{{ quicksync_tmp_dir }}"
     mode: "755"
-  when: not quicksync_skip_download
+  when:
+    - not quicksync_skip_download
+    - not quicksync_skip_checksum
 
 - name: "Checksum downloaded archive"
   ansible.builtin.command:
     cmd: "./checksum.sh {{ target_filename }}"
     chdir: "{{ quicksync_tmp_dir }}"
-  when: not quicksync_skip_download
+  when:
+    - not quicksync_skip_download
+    - not quicksync_skip_checksum
 
 - name: "Stop service (if running)"
   ansible.builtin.systemd:

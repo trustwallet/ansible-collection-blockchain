@@ -80,6 +80,10 @@ quicksync_force: false
 # assuming that the file has been already downloaded.
 quicksync_skip_download: false
 
+# <quicksync_skip_download> skips steps to perform the checksum over downloaded archive,
+# quicksync.io has issues recently with checksum integrity.
+quicksync_skip_checksum: false
+
 # <quicksync_target_url> allows to override target url to download chain data archive
 # e.g. quicksync_target_url: <custom state url>
 

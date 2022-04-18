@@ -16,3 +16,4 @@
   roles:
     - role: gantsign.golang
       golang_version: "1.18.1"
+      golang_install_dir: /usr/local/go

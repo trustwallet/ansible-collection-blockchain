@@ -57,9 +57,9 @@ until it is at the current height (we have already set this variable in `vars/te
   become: true
 
   roles:
-    - roles: gantsign.golang
+    - role: gantsign.golang
       golang_version: "1.18.1"
-      golang_install_dir: /usr/local
+      golang_install_dir: /usr/local/go
 
     - role: trustwallet.blockchain.cosmos
       chain_name: osmosis
