@@ -70,7 +70,7 @@
         version: "{{ chain_version }}"
 
     - name: "Make {{ chain_name }} binary" # noqa no-changed-when
-      ansible.builtin.command: "make install"
+      ansible.builtin.shell: "{{ make_command | default('make install') }}"
       args:
         chdir: "/tmp/{{ chain_name }}"
       environment:

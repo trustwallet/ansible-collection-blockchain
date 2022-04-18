@@ -142,7 +142,7 @@ The `trustwallet-blockchain-x.x.x.tar.gz` file will appear at the root of the pr
 It can be installed for local testing by executing the following command:
 
 ```sh
-ansible-galaxy collection install trustwallet-blockchain-0.3.4.tar.gz --force
+ansible-galaxy collection install trustwallet-blockchain-0.x.x.tar.gz --force
 ```
 
 ## References
