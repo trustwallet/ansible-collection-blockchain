@@ -87,6 +87,7 @@
   ansible.builtin.file:
     path: "{{ data_dir }}/data"
     state: absent
+  notify: restart_service
 
 - name: "Extract chain data" # noqa command-instead-of-module
   ansible.builtin.command:
@@ -97,4 +98,3 @@
   become: true
   become_user: "{{ username }}"
   changed_when: false
-  notify: restart_service
