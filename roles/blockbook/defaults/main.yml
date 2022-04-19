@@ -12,7 +12,7 @@ data_dir: "{{ base_dir }}/data"
 
 chain_backend_dir: "{{ data_dir }}/{{ chain_name }}/backend"
 
-blockbook_version: 0.3.5
+blockbook_version: "v0.3.6"
 
 blockbook_vars_file: configs/environ.json
 

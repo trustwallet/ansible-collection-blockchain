@@ -17,7 +17,7 @@ platforms:
     volumes:
       - device_name: xvda
         ebs:
-          volume_size: 40
+          volume_size: 80
           delete_on_termination: true
     tags:
       Name: molecule-blockbook-${BLOCKBOOK_CHAIN_NAME}
