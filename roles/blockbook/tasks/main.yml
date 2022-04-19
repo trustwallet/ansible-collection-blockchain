@@ -10,6 +10,7 @@
   ansible.builtin.git:
     repo: https://github.com/trezor/blockbook
     dest: "{{ blockbook_checkout_dir }}"
+    version: "{{ blockbook_version }}"
     force: true
 
 - name: "Override blockbook config"
@@ -31,17 +32,28 @@
   set_fact:
     backend_vars: "{{ backend_vars_result.stdout | from_json }}"
 
+- name: "Check {{ chain_name }} backend package was built"
+  ansible.builtin.stat:
+    path: "{{ blockbook_checkout_dir }}/build/backend-{{ chain_name }}_{{ backend_vars.backend.version }}-{{ backend_vars.backend.package_revision }}_amd64.deb"
+  register: backend_package_stat
+
+- name: "Check blockbook package was built"
+  ansible.builtin.stat:
+    path: "{{ blockbook_checkout_dir }}/build/blockbook-{{ chain_name }}_{{ blockbook_version | replace('v','') }}_amd64.deb"
+  register: blockbook_package_stat
+
 - name: "Make {{ chain_name }} packages"
   ansible.builtin.shell:
     cmd: "make all-{{ chain_name }}"
     chdir: "{{ blockbook_checkout_dir }}"
-    creates: "{{ blockbook_checkout_dir }}/build/backend-{{ chain_name }}_{{ backend_vars.backend.version }}-{{ backend_vars.backend.package_revision }}_amd64.deb"
+  when: not backend_package_stat.stat.exists or not blockbook_package_stat.stat.exists
+  register: make_packages
 
 - name: "Install {{ chain_name }} backend package"
   ansible.builtin.shell:
     cmd: "apt install ./backend-{{ chain_name }}_{{ backend_vars.backend.version }}-{{ backend_vars.backend.package_revision }}_amd64.deb -y"
     chdir: "{{ blockbook_checkout_dir }}/build"
-  changed_when: false
+  changed_when: make_packages.changed
 
 - name: "Enable and start {{ chain_name }} backend service"
   ansible.builtin.systemd:
@@ -52,9 +64,9 @@
 
 - name: "Install {{ chain_name }} blockbook package"
   ansible.builtin.shell:
-    cmd: "apt install ./blockbook-{{ chain_name }}_{{ blockbook_version }}_amd64.deb -y"
+    cmd: "apt install ./blockbook-{{ chain_name }}_{{ blockbook_version | replace('v','') }}_amd64.deb -y"
     chdir: "{{ blockbook_checkout_dir }}/build"
-  changed_when: false
+  changed_when: make_packages.changed
 
 - name: "Enable and start {{ coin }} blockbook service"
   ansible.builtin.systemd:

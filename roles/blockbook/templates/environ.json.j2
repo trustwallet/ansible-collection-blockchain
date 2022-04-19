@@ -1,5 +1,5 @@
 {
-    "version": "{{ blockbook_version }}",
+    "version": "{{ blockbook_version | replace('v','') }}",
     "backend_install_path": "{{ base_dir }}/nodes",
     "backend_data_path": "{{ data_dir }}",
     "blockbook_install_path": "{{ base_dir }}/blockbook",
