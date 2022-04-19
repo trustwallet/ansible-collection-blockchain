@@ -8,7 +8,7 @@
       vars:
         ansible_become: true
         chain_name: "{{ lookup('env', 'COSMOS_CHAIN_NAME') }}"
-        chain_git_repo: https://github.com/osmosis-labs/osmosis
-        # chain_bin_url: https://github.com/osmosis-labs/osmosis/releases/download/v6.4.0/osmosisd-6.4.0-linux-amd64
+        #chain_git_repo: https://github.com/osmosis-labs/osmosis
+        chain_bin_url: https://github.com/osmosis-labs/osmosis/releases/download/v7.2.0/osmosisd-7.2.0-linux-amd64
         chain_version: v7.2.0
         quicksync_mode: none
