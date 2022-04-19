@@ -24,7 +24,7 @@ jobs:
 
       # Fixing timeouts in nested Docker networking. See https://github.com/kubernetes/test-infra/issues/23741
       - name: Enabling tcp mss clamping in the network
-        run: iptables -t mangle -A POSTROUTING -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
+        run: sudo iptables -t mangle -A POSTROUTING -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
 
       - uses: actions/checkout@v2
 
