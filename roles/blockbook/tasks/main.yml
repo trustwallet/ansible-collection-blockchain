@@ -47,6 +47,7 @@
     cmd: "make all-{{ chain_name }}"
     chdir: "{{ blockbook_checkout_dir }}"
   when: not backend_package_stat.stat.exists or not blockbook_package_stat.stat.exists
+  no_log: true # hide huge logs iutput
   register: make_packages
 
 - name: "Install {{ chain_name }} backend package"
