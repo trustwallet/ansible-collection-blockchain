@@ -16,7 +16,7 @@
   register: chain_version_result
 
 - name: "Download chain binary"
-  when: 
+  when:
     - chain_version is defined
     - chain_version_result.stdout is not search(chain_version | replace('v', ''))
     - chain_bin_url is defined
