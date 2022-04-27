@@ -1,7 +1,7 @@
 ---
 namespace: trustwallet
 name: blockchain
-version: 0.3.7
+version: 0.4.0
 readme: README.md
 authors:
   - vorotech
@@ -10,12 +10,13 @@ description: |
   Trust Wallet is a most trusted & secure crypto wallet.
 license_file: LICENSE
 tags:
-  - blockchain
-  - ethereum
-  - cosmos
-  - near
-  - tron
   - blockbook
+  - blockchain
+  - cosmos
+  - ethereum
+  - near
+  - polygon
+  - tron
 dependencies:
   community.general: ">=4.2.0"
 repository: https://github.com/trustwallet/ansible-collection-blockchain

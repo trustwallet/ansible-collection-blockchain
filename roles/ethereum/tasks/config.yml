@@ -1,16 +1,24 @@
 ---
+- name: "Override data_dir from specified config"
+  ansible.builtin.set_fact:
+    data_dir: "{{ geth_config.Node.DataDir }}"
+  when:
+    - geth_config is defined
+    - geth_config.Node is defined
+    - geth_config.Node.DataDir is defined
+
 - name: "Ensure data dir exists"
   ansible.builtin.file:
-    path: "{{ data_dir }}"
-    owner: "{{ username }}"
+    dest: "{{ data_dir }}"
     state: directory
+    owner: "{{ username }}"
     mode: "774"
 
-- name: "Set final geth config"
+- name: "geth - Merge default and custom config"
   ansible.builtin.set_fact:
     final_geth_config: "{{ default_geth_config | combine(geth_config, recursive=true) }}"
 
-- name: "Copy Geth config in place"
+- name: "geth - Copy final config in place"
   ansible.builtin.template:
     src: config.toml.j2
     dest: "{{ data_dir }}/config.toml"

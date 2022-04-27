@@ -1,0 +1,13 @@
+{{ ansible_managed | comment }}
+
+{% for section in final_bor_config %}
+[{{ section }}]
+{% for key, value in final_bor_config[section].items() %}
+{% if value is string %}
+{{ key }} = "{{ value }}"
+{% else %}
+{{ key }} = {{ value | to_json }}
+{% endif %}
+{% endfor %}
+
+{% endfor %}

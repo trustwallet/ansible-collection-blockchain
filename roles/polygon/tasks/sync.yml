@@ -1,0 +1,178 @@
+---
+- name: "Install apt packages"
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 86400
+    pkg:
+      - libxml2-utils # xmllint
+      - aria2
+
+- name: "Ensure download dir permissions"
+  ansible.builtin.file:
+    dest: "{{ quicksync_tmp_dir }}"
+    state: directory
+    mode: "777"
+
+- name: "Set Network title"
+  ansible.builtin.set_fact:
+    network_title: "{{ (heimdall_network == 'mainnet') | ternary('Mainnet', 'TestNet') }}"
+
+- name: "Set Archive Bor snapshot"
+  ansible.builtin.set_fact:
+    bor_snapshot_title: Archive
+  when: quicksync_mode == 'archive'
+
+- name: "Set FullNode Bor snapshot"
+  ansible.builtin.set_fact:
+    bor_snapshot_title: FullNode
+  when: quicksync_mode == 'full'
+
+- name: "Set Pruned Bor snapshot"
+  ansible.builtin.set_fact:
+    bor_snapshot_title: Pruned
+  when: quicksync_mode == 'pruned'
+
+- name: "Compose titles"
+  ansible.builtin.set_fact:
+    bor_title: "{{ network_title }} {{ bor_snapshot_title }} Bor"
+    heimdall_title: "{{ network_title }} Heimdall"
+
+- name: "heimdall - Download chain data"
+  when:
+    - heimdall_init_result.changed or quicksync_force
+    - quicksync_mode != 'none'
+  block:
+    - name: "heimdall - Get snapshot URL"
+      ansible.builtin.shell:
+        cmd: >
+          curl https://snapshots.matic.today/ | xmllint --html --xpath '//td[contains(text(), "{{ heimdall_title }}")]/following-sibling::td/a/text()'  -
+      changed_when: true
+      register: heimdall_snapshot_url_result
+
+    - name: "heimdall - Set snapshot URL and filename"
+      ansible.builtin.set_fact:
+        heimdall_snapshot_url: "{{ heimdall_snapshot_url_result.stdout }}"
+        heimdall_snapshot_filename: "{{ heimdall_snapshot_url_result.stdout | basename }}"
+
+    - name: "heimdall - Find downloaded data archive (if skip download)"
+      ansible.builtin.find:
+        paths: "{{ quicksync_tmp_dir }}"
+        patterns: "heimdall-*.tar.gz"
+      register: local_heimdall_data
+      when: quicksync_skip_download
+
+    - name: "heimdall - Override target filename (if skip download)"
+      ansible.builtin.set_fact:
+        heimdall_snapshot_filename: "{{ local_heimdall_data.files[0] }}"
+      when:
+        - quicksync_skip_download
+        - local_heimdall_data.files | length > 0
+
+    - name: "heimdall - Download snapshot archive"
+      ansible.builtin.shell:
+        cmd: "aria2c --continue --max-connection-per-server={{ quicksync_connection_num }} {{ heimdall_snapshot_url }} > heimdall_aria.log"
+        chdir: "{{ quicksync_tmp_dir }}"
+      async: 72000
+      poll: 10
+      when: not quicksync_skip_download
+
+    - name: "heimdall - Stop services (if running)"
+      ansible.builtin.systemd:
+        name: "{{ item }}"
+        state: stopped
+      loop:
+        - "{{ heimdall_daemon_name }}"
+        - "{{ heimdall_rest_server_daemon_name }}"
+
+    - name: "heimdall - Delete inner data dir"
+      ansible.builtin.file:
+        path: "{{ heimdall_dir }}/data"
+        state: absent
+      notify: restart_heimdall_service
+
+    - name: "heimdall - Create inner chain data dir"
+      ansible.builtin.file:
+        path: "{{ heimdall_dir }}/data"
+        state: directory
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        mode: "755"
+
+    - name: "heimdall - Extract chain data"
+      ansible.builtin.command:
+        cmd: "tar -xf {{ quicksync_tmp_dir }}/{{ heimdall_snapshot_filename }}"
+        chdir: "{{ heimdall_dir }}/data"
+      async: 72000
+      poll: 10
+      become: true
+      become_user: "{{ username }}"
+      changed_when: false
+
+- name: "bor - Download chain data"
+  when:
+    - bor_init_result.changed or quicksync_force
+    - quicksync_mode != 'none'
+  block:
+
+    - name: "bor - Get snapshot URL"
+      ansible.builtin.shell:
+        cmd: >
+          curl https://snapshots.matic.today/ | xmllint --html --xpath '//td[contains(text(), "{{ bor_title }}")]/following-sibling::td/a/text()'  -
+      changed_when: true
+      register: bor_snapshot_url_result
+
+    - name: "bor - Set snapshot URL and filename"
+      ansible.builtin.set_fact:
+        bor_snapshot_url: "{{ bor_snapshot_url_result.stdout }}"
+        bor_snapshot_filename: "{{ bor_snapshot_url_result.stdout | basename }}"
+
+    - name: "bor - Find downloaded data archive (if skip download)"
+      ansible.builtin.find:
+        paths: "{{ quicksync_tmp_dir }}"
+        patterns: "bor-*.tar.gz"
+      register: local_bor_data
+      when: quicksync_skip_download
+
+    - name: "bor - Override target filename (if skip download)"
+      ansible.builtin.set_fact:
+        bor_snapshot_filename: "{{ local_bor_data.files[0] }}"
+      when:
+        - quicksync_skip_download
+        - local_bor_data.files | length > 0
+
+    - name: "bor - Download snapshot archive"
+      ansible.builtin.shell:
+        cmd: "aria2c --continue --max-connection-per-server={{ quicksync_connection_num }} {{ bor_snapshot_url }} > bor_aria.log"
+        chdir: "{{ quicksync_tmp_dir }}"
+      async: 72000
+      poll: 10
+      when: not quicksync_skip_download
+
+    - name: "bor - Stop services (if running)"
+      ansible.builtin.systemd:
+        name: "{{ bor_daemon_name }}"
+        state: stopped
+
+    - name: "bor - Delete inner chain data dir"
+      ansible.builtin.file:
+        path: "{{ bor_data_dir }}/bor/chaindata"
+        state: absent
+      notify: restart_bor_service
+
+    - name: "bor - Create inner chain data dir"
+      ansible.builtin.file:
+        path: "{{ bor_data_dir }}/bor/chaindata"
+        state: directory
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        mode: "755"
+
+    - name: "bor - Extract chain data"
+      ansible.builtin.command:
+        cmd: "tar -xf {{ quicksync_tmp_dir }}/{{ bor_snapshot_filename }}"
+        chdir: "{{ bor_data_dir }}/bor/chaindata"
+      async: 72000
+      poll: 10
+      become: true
+      become_user: "{{ username }}"
+      changed_when: false

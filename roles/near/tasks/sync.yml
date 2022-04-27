@@ -1,45 +1,41 @@
 ---
-- name: "Download chain data"
-  when:
-    - init_result.changed or quicksync_force
-    - quicksync_mode != 'none'
-  block:
-    - name: "Install apt packages"
-      ansible.builtin.apt:
-        update_cache: true
-        cache_valid_time: 86400
-        pkg: python3-pip
+- name: "Install apt packages"
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 86400
+    pkg: python3-pip
 
-    - name: "Install awscli pip package"
-      ansible.builtin.pip:
-        name: awscli
+- name: "Install awscli pip package"
+  ansible.builtin.pip:
+    name: awscli
 
-    - name: "Get latest target"
-      ansible.builtin.command:
-        cmd: >
-          aws s3 --no-sign-request cp s3://near-protocol-public/backups/mainnet/{{ quicksync_mode }}/latest .
-        chdir: /tmp
-      changed_when: false
+- name: "Get latest target"
+  ansible.builtin.command:
+    cmd: >
+      aws s3 cp --no-sign-request --no-progress
+      s3://near-protocol-public/backups/mainnet/{{ quicksync_mode }}/latest .
+    chdir: /tmp
+  changed_when: false
 
-    - name: "Stop service (if running)"
-      ansible.builtin.systemd:
-        name: "{{ near_daemon_name }}"
-        state: stopped
+- name: "Stop service (if running)"
+  ansible.builtin.systemd:
+    name: "{{ near_daemon_name }}"
+    state: stopped
 
-    - name: "Delete inner data dir"
-      ansible.builtin.file:
-        path: "{{ data_dir }}/data"
-        state: absent
+- name: "Delete inner data dir"
+  ansible.builtin.file:
+    path: "{{ data_dir }}/data"
+    state: absent
 
-    - name: "Download latest data"
-      ansible.builtin.shell:
-        cmd: >
-          aws s3 --no-sign-request cp --no-sign-request --recursive --no-progress
-          s3://near-protocol-public/backups/mainnet/{{ quicksync_mode }}/$(cat /tmp/latest)
-          {{ data_dir }}/data
-      async: 72000
-      poll: 10
-      become: true
-      become_user: "{{ username }}"
-      changed_when: false
-      notify: restart_service
+- name: "Download latest data"
+  ansible.builtin.shell:
+    cmd: >
+      aws s3 cp --no-sign-request --recursive --no-progress
+      s3://near-protocol-public/backups/mainnet/{{ quicksync_mode }}/$(cat /tmp/latest)
+      {{ data_dir }}/data
+  async: 72000
+  poll: 10
+  become: true
+  become_user: "{{ username }}"
+  changed_when: false
+  notify: restart_service

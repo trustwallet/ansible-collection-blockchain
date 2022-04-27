@@ -1,0 +1,18 @@
+{{ ansible_managed | comment }}
+
+[Unit]
+Description=Heimdall Daemon
+StartLimitIntervalSec=500
+StartLimitBurst=5
+After=network.target
+
+[Service]
+Type=simple
+User={{ username }}
+ExecStart={{ bin_dir }}/heimdalld start --home {{ heimdall_dir }} {{ heimdall_extra_run_args }}
+Restart=on-failure
+RestartSec=5s
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target

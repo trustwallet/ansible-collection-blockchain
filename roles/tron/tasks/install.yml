@@ -2,8 +2,8 @@
 - name: "Install apt packages"
   ansible.builtin.apt:
     pkg: libgoogle-perftools4
-    cache_valid_time: 3600
     update_cache: true
+    cache_valid_time: 86400
 
 - name: "Create user {{ username }}"
   ansible.builtin.user:

@@ -18,16 +18,9 @@
 
 - name: "Install apt package"
   ansible.builtin.apt:
-    pkg: ethereum
     update_cache: true
     cache_valid_time: 86400
+    pkg: ethereum
   when:
     - ansible_distribution == "Ubuntu"
   notify: restart_service
-
-- name: "Ensure creation of data dir"
-  ansible.builtin.file:
-    dest: "{{ geth_config.Node.DataDir | default(data_dir) }}"
-    state: directory
-    owner: "{{ username }}"
-    mode: "774"

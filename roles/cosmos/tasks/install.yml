@@ -9,9 +9,28 @@
     dest: "/etc/systemd/system/{{ chain_daemon_name }}.service"
     mode: "644"
 
+- name: "Get {{ chain_bin }} binary version" # noqa no-changed-when
+  ansible.builtin.shell:
+    cmd: "{{ bin_dir }}/{{ chain_bin }} version 2>&1"
+  failed_when: false
+  register: chain_version_result
+
 - name: "Download chain binary"
-  when: chain_bin_url is defined
+  when:
+    - chain_version is defined
+    - chain_version_result.stdout is not search(chain_version | replace('v', ''))
+    - chain_bin_url is defined
+    - chain_git_repo is not defined
   block:
+    - name: "Stop service (if running)"
+      ansible.builtin.systemd:
+        name: "{{ chain_daemon_name }}"
+        state: stopped
+
+    - name: "Remove previous file"
+      ansible.builtin.file:
+        dest: "{{ bin_dir }}/{{ chain_bin }}"
+        state: absent
 
     - name: "Unarchive chain binary"
       ansible.builtin.unarchive:
@@ -39,22 +58,26 @@
       when: chain_bin_url is regex('[_-][^.]+$') # no extension, e.g. osmosisd-6.1.0-linux-amd64
       notify: restart_service
 
-- name: "Get {{ chain_bin }} binary version" # noqa no-changed-when
-  ansible.builtin.shell:
-    cmd: "{{ bin_dir }}/{{ chain_bin }} version 2>&1"
-  failed_when: false
-  register: chain_version_result
-
 - name: "Make chain binary"
   when:
     - chain_version is defined
-    - ('v'~chain_version_result.stdout) is not search(chain_version)
+    - chain_version_result.stdout is not search(chain_version | replace('v', ''))
     - chain_git_repo is defined
-    - chain_bin_url is not defined
   block:
+    - name: "Stop service (if running)"
+      ansible.builtin.systemd:
+        name: "{{ chain_daemon_name }}"
+        state: stopped
+
+    - name: "Remove previous file"
+      ansible.builtin.file:
+        dest: "{{ bin_dir }}/{{ chain_bin }}"
+        state: absent
+
     - name: "Install apt packages"
       ansible.builtin.apt:
         update_cache: true
+        cache_valid_time: 86400
         pkg:
           - build-essential
           - curl

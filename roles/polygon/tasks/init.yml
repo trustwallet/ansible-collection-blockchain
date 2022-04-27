@@ -1,0 +1,81 @@
+---
+# https://stackoverflow.com/a/56379678/166473
+- name: "Install acl package"
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 86400
+    pkg: acl
+
+- name: "Ensure data dir permissions"
+  ansible.builtin.file:
+    dest: "{{ data_dir }}"
+    state: directory
+    owner: "{{ username }}"
+    mode: "774"
+
+- name: "heimdall - Init"
+  ansible.builtin.command:
+    cmd: >
+      {{ bin_dir }}/heimdalld --home {{ heimdall_dir }} --home-client {{ heimdall_client_dir }} init
+    creates: "{{ heimdall_dir }}/config/config.toml"
+  become: true
+  become_user: "{{ username }}"
+  register: heimdall_init_result
+
+- name: "heimdall - Download the genesis file (instead default)"  # noqa no-handler
+  ansible.builtin.get_url:
+    url: "{{ heimdall_genesis_json_url }}"
+    dest: "{{ heimdall_dir }}/config/genesis.json"
+    force: true
+    mode: "640"
+  become: true
+  become_user: "{{ username }}"
+  when: heimdall_init_result.changed
+  notify: restart_heimdall_service
+
+- name: "bor - Override bor_data_dir from specified config"
+  ansible.builtin.set_fact:
+    bor_data_dir: "{{ bor_config.Node.DataDir }}"
+  when:
+    - bor_config is defined
+    - bor_config.Node is defined
+    - bor_config.Node.DataDir is defined
+
+- name: "bor - Set default bor_data_dir"
+  ansible.builtin.set_fact:
+    bor_data_dir: "{{ bor_dir }}/data"
+  when:
+    - bor_data_dir is not defined
+
+- name: "bor - Ensure bor dirs exist"
+  ansible.builtin.file:
+    dest: "{{ item }}"
+    state: directory
+    owner: "{{ username }}"
+    mode: "774"
+  loop:
+    - "{{ bor_dir }}"
+    - "{{ bor_data_dir }}/bor"
+
+- name: "bor - Download the genesis file"  # noqa no-handler
+  ansible.builtin.get_url:
+    url: "{{ bor_genesis_json_url }}"
+    dest: "{{ bor_dir }}/genesis.json"
+    mode: "640"
+  become: true
+  become_user: "{{ username }}"
+
+- name: "bor - Create nodekey"
+  ansible.builtin.command:
+    cmd: "{{ bin_dir }}/bootnode -genkey {{ bor_data_dir }}/bor/nodekey"
+    creates: "{{ bor_data_dir }}/bor/nodekey"
+  become: true
+  become_user: "{{ username }}"
+
+- name: "bor - Init"
+  ansible.builtin.command:
+    cmd: "{{ bin_dir }}/bor init --datadir {{ bor_data_dir }} {{ bor_dir }}/genesis.json"
+    creates: "{{ bor_data_dir }}/keystore"
+  become: true
+  become_user: "{{ username }}"
+  register: bor_init_result

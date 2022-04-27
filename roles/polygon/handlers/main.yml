@@ -1,0 +1,24 @@
+---
+- name: "Restart heimdalld service"
+  ansible.builtin.systemd:
+    name: "{{ heimdall_daemon_name }}"
+    state: restarted
+    daemon_reload: true
+    enabled: true
+  listen: restart_heimdall_service
+
+- name: "Restart heimdall_rest_server service"
+  ansible.builtin.systemd:
+    name: "{{ heimdall_rest_server_daemon_name }}"
+    state: restarted
+    daemon_reload: true
+    enabled: true
+  listen: restart_heimdall_service
+
+- name: "Restart bor service"
+  ansible.builtin.systemd:
+    name: "{{ bor_daemon_name }}"
+    state: restarted
+    daemon_reload: true
+    enabled: true
+  listen: restart_bor_service
