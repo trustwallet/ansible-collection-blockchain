@@ -15,16 +15,11 @@
   become_user: "{{ username }}"
   register: init_result
 
-- name: Delete default config.json # noqa no-handler
-  ansible.builtin.file:
-    path: "{{ data_dir }}/config.json"
-    state: absent
-  when: init_result.changed
-
-- name: Download config.json # noqa no-handler
+- name: "Download the config file (instead default)" # noqa no-handler
   ansible.builtin.get_url:
     url: "{{ near_config_json_url }}"
     dest: "{{ data_dir }}/config.json"
+    force: true
     mode: "640"
   become: true
   become_user: "{{ username }}"

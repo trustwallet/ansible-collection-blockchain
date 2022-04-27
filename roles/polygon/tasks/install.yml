@@ -1,0 +1,102 @@
+---
+- name: "Create user {{ username }}"
+  ansible.builtin.user:
+    name: "{{ username }}"
+
+- name: "Create systemd service files"
+  ansible.builtin.template:
+    src: templates/{{ item }}.service.j2
+    dest: "/etc/systemd/system/{{ item }}.service"
+    mode: "644"
+  loop:
+    - "{{ heimdall_daemon_name }}"
+    - "{{ heimdall_rest_server_daemon_name }}"
+    - "{{ bor_daemon_name }}"
+  notify:
+    - restart_heimdall_service
+    - restart_bor_service
+
+- name: "Install apt packages"
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 86400
+    pkg:
+      - build-essential
+      - git
+      - jq
+      - python3-pip
+      - rabbitmq-server
+
+- name: "heimdall - Get binary version"
+  ansible.builtin.command:
+    cmd: "{{ bin_dir }}/heimdalld version"
+  changed_when: false
+  failed_when: false
+  register: heimdall_version_result
+
+- name: "heimdall - Build binary"
+  when: heimdall_version_result.stdout is not search(heimdall_version | replace('v',''))
+  block:
+
+    - name: "heimdall - Git checkout"
+      ansible.builtin.git:
+        repo: https://github.com/maticnetwork/heimdall.git
+        dest: "{{ home_dir }}/heimdall"
+        version: "{{ heimdall_version }}"
+        force: true
+
+    - name: "heimdall - Build binary"
+      ansible.builtin.command:
+        cmd: "make install network={{ heimdall_network }}"
+        chdir: "{{ home_dir }}/heimdall"
+      environment:
+        PATH: "{{ golang_bin_dir }}:{{ ansible_env.PATH }}"
+        GOBIN: "{{ bin_dir }}"
+      notify: restart_heimdall_service
+
+    - name: "heimdall - Get binary version"
+      ansible.builtin.command:
+        cmd: "{{ bin_dir }}/heimdalld version"
+
+- name: "bor - Get binary version"
+  ansible.builtin.command:
+    cmd: "{{ bin_dir }}/bor version"
+  changed_when: false
+  failed_when: false
+  register: bor_version_result
+
+- name: "heimdall - Build binary"
+  when: bor_version_result.stdout is not search(bor_version | replace('v',''))
+  block:
+
+    - name: "bor - Git checkout"
+      ansible.builtin.git:
+        repo: https://github.com/maticnetwork/bor.git
+        dest: "{{ home_dir }}/bor"
+        version: "{{ bor_version }}"
+        force: true
+
+    - name: "bor - Build binary"
+      ansible.builtin.command:
+        cmd: "make bor-all"
+        chdir: "{{ home_dir }}/bor"
+      environment:
+        PATH: "{{ golang_bin_dir }}:{{ ansible_env.PATH }}"
+        GOBIN: "{{ bin_dir }}"
+
+    - name: "bor - Creating symlink for bor"
+      file:
+        src: "{{ home_dir }}/bor/build/bin/bor"
+        dest: "{{ bin_dir }}/bor"
+        state: link
+      notify: restart_bor_service
+
+    - name: "bor - Creating symlink for bootnode"
+      file:
+        src: "{{ home_dir }}/bor/build/bin/bootnode"
+        dest: "{{ bin_dir }}/bootnode"
+        state: link
+
+    - name: "bor - Get binary version"
+      ansible.builtin.command:
+        cmd: "{{ bin_dir }}/bor version"

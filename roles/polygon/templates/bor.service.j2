@@ -1,0 +1,21 @@
+{{ ansible_managed | comment }}
+
+[Unit]
+Description=Bor Daemon
+StartLimitIntervalSec=500
+StartLimitBurst=5
+After=network.target
+
+[Service]
+Type=simple
+User={{ username }}
+ExecStart={{ bin_dir }}/bor --config {{ bor_dir }}/config.toml --bootnodes "{{ bor_bootnodes }}" {{ bor_extra_run_args }}
+KillSignal=SIGINT
+TimeoutStopSec=120
+Restart=on-failure
+RestartSec=5s
+LimitNOFILE=65535
+Environment="VALIDATOR_ADDRESS={{ validator_address }}"
+
+[Install]
+WantedBy=multi-user.target

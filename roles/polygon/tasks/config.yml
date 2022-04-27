@@ -1,0 +1,54 @@
+---
+- name: "heimdall - Update moniker in config.toml" # noqa risky-file-permissions
+  community.general.ini_file:
+    path: "{{ heimdall_dir }}/config/config.toml"
+    section: ""
+    option: "moniker"
+    value: "\"{{ heimdall_moniker }}\""
+  notify: restart_heimdall_service
+
+- name: "heimdall - Update seeds in config.toml" # noqa risky-file-permissions
+  community.general.ini_file:
+    path: "{{ heimdall_dir }}/config/config.toml"
+    section: "p2p"
+    option: "seeds"
+    value: "\"{{ heimdall_seeds }}\""
+  notify: restart_heimdall_service
+
+- name: "heimdall - Update cors_allowed_origins in config.toml" # noqa risky-file-permissions
+  community.general.ini_file:
+    path: "{{ heimdall_dir }}/config/config.toml"
+    section: "rpc"
+    option: "cors_allowed_origins"
+    value: "[\"*\"]"
+  notify: restart_heimdall_service
+
+- name: "heimdall - Assert eth_rpc_url is defined"
+  ansible.builtin.assert:
+    that:
+      - eth_rpc_url | default('') | length > 0
+    fail_msg: "missed required 'eth_rpc_url' – an RPC endpoint for a fully synced Ethereum mainnet node, i.e Infura"
+
+- name: "heimdall - Update eth_rpc_url in heimdall-config.toml" # noqa risky-file-permissions
+  community.general.ini_file:
+    path: "{{ heimdall_dir }}/config/heimdall-config.toml"
+    section: ""
+    option: "eth_rpc_url"
+    value: "\"{{ eth_rpc_url }}\""
+  notify: restart_heimdall_service
+
+- name: "bor - Merge default and custom config"
+  ansible.builtin.set_fact:
+    final_bor_config: "{{ default_bor_config | combine(bor_config, recursive=true) }}"
+
+- name: "bor - Copy final config in place"
+  ansible.builtin.template:
+    src: bor-config.toml.j2
+    dest: "{{ bor_dir }}/config.toml"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: "644"
+  when:
+    - final_bor_config is defined
+    - final_bor_config.keys() | length > 0
+  notify: restart_bor_service

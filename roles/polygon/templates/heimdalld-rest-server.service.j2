@@ -1,0 +1,18 @@
+{{ ansible_managed | comment }}
+
+[Unit]
+Description=Heimdall REST Server Daemon
+StartLimitIntervalSec=500
+StartLimitBurst=5
+After=network.target
+
+[Service]
+Type=simple
+User={{ username }}
+ExecStart={{ bin_dir }}/heimdalld rest-server --home {{ heimdall_dir }} --chain-id {{ network_id }} {{ heimdall_rest_server_extra_run_args }}
+Restart=on-failure
+RestartSec=5s
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target

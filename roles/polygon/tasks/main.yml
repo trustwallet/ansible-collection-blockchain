@@ -3,7 +3,9 @@
 
 - include_tasks: init.yml
 
+- include_tasks: config.yml
+
 - include_tasks: sync.yml
   when:
-    - init_result.changed or quicksync_force
+    - heimdall_init_result.changed or bor_init_result.changed or quicksync_force
     - quicksync_mode != 'none'

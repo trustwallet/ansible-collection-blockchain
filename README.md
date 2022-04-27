@@ -10,11 +10,12 @@ type is required.
 
 List of the collection roles:
 
+* [trustwallet.blockchain.blockbook](https://github.com/trustwallet/ansible-collection-blockchain/tree/main/roles/blockbook) - Blockbook supported blockchains
 * [trustwallet.blockchain.cosmos](https://github.com/trustwallet/ansible-collection-blockchain/tree/main/roles/cosmos) - All Cosmos-SDK based blockchains
 * [trustwallet.blockchain.ethereum](https://github.com/trustwallet/ansible-collection-blockchain/tree/main/roles/ethereum) - Ethereum blockchain with Geth
 * [trustwallet.blockchain.near](https://github.com/trustwallet/ansible-collection-blockchain/tree/main/roles/near) - NEAR blockchain
+* [trustwallet.blockchain.polygon](https://github.com/trustwallet/ansible-collection-blockchain/tree/main/roles/polygon) - Polygon blockchain
 * [trustwallet.blockchain.tron](https://github.com/trustwallet/ansible-collection-blockchain/tree/main/roles/tron) - TRON blockchain
-* [trustwallet.blockchain.blockbook](https://github.com/trustwallet/ansible-collection-blockchain/tree/main/roles/blockbook) - Blockbook supported blockchains
 * _...more are coming_
 
 ## Ansible Collection Usage
@@ -37,10 +38,9 @@ Example setting up Ethereum Full Node with the collection role:
   pre_tasks:
     - name: "Install apt packages"
       ansible.builtin.apt:
-        update_cache: yes
-        pkg:
-          - python3
-          - python3-pip
+        update_cache: true
+        cache_valid_time: 86400
+        pkg: python3
   
   roles:
     - role: trustwallet.blockchain.ethereum

@@ -4,8 +4,9 @@
   become: true
 
   tasks:
-    - name: "Include roles/near"
+    - name: "Include roles/polygon"
       ansible.builtin.include_role:
-        name: roles/near
+        name: roles/polygon
       vars:
         quicksync_mode: none
+        eth_rpc_url: https://rpc.ankr.com/eth

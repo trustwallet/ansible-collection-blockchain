@@ -3,8 +3,7 @@
   ansible.builtin.apt:
     update_cache: true
     cache_valid_time: 86400
-    pkg:
-      - make
+    pkg: make
 
 - name: "Git checkout"
   ansible.builtin.git:
