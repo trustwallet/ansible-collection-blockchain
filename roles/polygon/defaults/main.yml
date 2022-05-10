@@ -22,6 +22,16 @@ quicksync_connection_num: 5
 # By default chain data will be downloaded only after chain init.
 quicksync_force: false
 
+# <quicksync_force_heimdall> forces only Heimdall data download step.
+# Warning, the content of the data dir will be wiped.
+# By default chain data will be downloaded only after chain init.
+quicksync_force_heimdall: false
+
+# <quicksync_force_bor> forces only Bor data download step.
+# Warning, the content of the data dir will be wiped.
+# By default chain data will be downloaded only after chain init.
+quicksync_force_bor: false
+
 # <quicksync_skip_download> skips steps to download quicksync chain data archive,
 # assuming that the file has been already downloaded.
 quicksync_skip_download: false

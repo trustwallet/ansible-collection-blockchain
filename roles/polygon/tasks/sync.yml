@@ -39,7 +39,7 @@
 
 - name: "heimdall - Download chain data"
   when:
-    - heimdall_init_result.changed or quicksync_force
+    - heimdall_init_result.changed or quicksync_force or quicksync_force_heimdall
     - quicksync_mode != 'none'
   block:
     - name: "heimdall - Get snapshot URL"
@@ -110,7 +110,7 @@
 
 - name: "bor - Download chain data"
   when:
-    - bor_init_result.changed or quicksync_force
+    - bor_init_result.changed or quicksync_force or quicksync_force_bor
     - quicksync_mode != 'none'
   block:
 
