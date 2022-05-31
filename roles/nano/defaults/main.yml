@@ -1,0 +1,83 @@
+---
+# <username> is the non-root user under which daemon will operate
+username: nano
+
+# <home_dir> is a user home dir
+home_dir: "/home/{{ username }}"
+
+# <bin_dir> is a binaries location dir, should be in the PATH.
+bin_dir: /usr/local/bin
+
+# <nano_version> is the near binary version. When doesn't match, will rebuild binary from sources.
+nano_version: V23.1
+
+# <data_dir> is the near data dir
+data_dir: "{{ home_dir }}/.nano"
+
+# <nano_node> indicates that the machine is Nano RPC node handling the requests.
+nano_node: true
+
+# <nano_node_rpc_url> is the Nano node RPC URL used by RPC Cache layer.
+nano_node_rpc_url: http://localhost:7076
+
+# <nano_work_server> indicates the mahine is Nano Work Server performing the Prof of Work generation.
+nano_work_server: true
+
+# <nano_work_server_peers> are the Nano Work Server peer addresses, by default targeting same machine.
+nano_work_server_peers: [http://localhost:7776]
+
+# With current implementation of nano-rpc-cache
+# only a single work server peer is supported
+nano_work_server_peer: "{{ nano_work_server_peers[0] }}"
+
+# <nano_rpc_cache> indicates to set up additional caching layer which simplifies
+# for light wallets to generate PoW on server side and acts as a security layer
+# to skip certain unsafe actions when `enable_control`
+nano_rpc_cache: true 
+
+nano_rpc_cache_git_repo: https://github.com/catenocrypt/nano-work-cache.git
+
+nano_rpc_cache_config_path: "{{ home_dir }}/nano-rpc-cache/config.toml"
+
+# <nano_rpc_cache_bin> is name of the compiled binary
+nano_rpc_cache_bin: nano_rpc_cache
+
+nano_rpc_cache_make_command: cd ./src && go mod tidy && go build -ldflags="-s -w" -buildvcs=false -o {{ bin_dir }}/{{ nano_rpc_cache_bin }} ./main
+
+# <nano_rpc_cache_daemon_name> is the name of the SystemD service.
+nano_rpc_cache_daemon_name: nano-rpc-cache
+
+# <nano_rpc_cache_port> is the Nano RPC Cache listening port
+nano_rpc_cache_port: 7176
+
+# <nano_rpc_cache_filename> is the name of the cache file, can be relative,
+# can be absolute or can be empty "" to disable cache persistance to file.
+nano_rpc_cache_filename: "{{ home_dir }}/nano-rpc-cache/.cache"
+
+# <nano_rpc_cache_max_active_requests> is the number of max concurrent 
+# outstanding (not work_generation) requests.
+nano_rpc_cache_max_active_requests: 1000
+
+# <nano_rpc_cache_worker_count> is the  number of background worker threads,
+# and also maximum number of outgoing requests from pregenerations
+nano_rpc_cache_worker_count: 4
+
+# <nano_rpc_cache_max_active_work_generation_requests> is the number of concurrent outgoing 
+# work generation requests, 0 – means no limit. If set must be 
+# at least 1 larger than nano_rpc_cache_worker_count.
+nano_rpc_cache_max_active_work_generation_requests: 8
+
+# <nano_rpc_cache_pregeneration_enabled> indicates whether to generate PoW in advance when e.g. balance is retrieved
+# Warning: the settings might highly impact your system performance in case when many clients connected.
+nano_rpc_cache_pregeneration_enabled: false
+
+# <nano_rpc_cache_pregeneration_queue_size> is the maximum number of pregeneration requests to queue.
+nano_rpc_cache_pregeneration_queue_size: 1000
+
+# <nano_rpc_cache_age_limit_in_days> is the number of days until cached entries got cleaned up.
+# 0 – means no cache aging.
+nano_rpc_cache_age_limit_in_days: 30
+
+# <golang_bin_dir> is the location of the golang bin folder which will be added
+# to the $PATH.
+golang_bin_dir: /usr/local/go/bin

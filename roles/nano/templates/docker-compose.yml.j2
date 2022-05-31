@@ -1,0 +1,19 @@
+
+version: "3.8"
+
+services:
+
+  nano-node:
+    image: nanocurrency/nano:{{ nano_version }}
+    container_name: nano-node
+    volumes:
+      - nano-storage:/root
+    ports:
+      - 7075:7075 # Nano P2P
+      - 7076:7076 # Nano RPC
+      - 7078:7078 # Nano WebSockets
+    restart: unless-stopped
+
+volumes:
+  nano-storage:
+    external: true

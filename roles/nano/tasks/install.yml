@@ -1,0 +1,10 @@
+---
+- name: "Install apt packages"
+  ansible.builtin.apt:
+    pkg: acl
+  become: true
+
+- name: "Create user {{ username }}"
+  ansible.builtin.user:
+    name: "{{ username }}"
+  become: true

@@ -13,6 +13,7 @@ List of the collection roles:
 * [trustwallet.blockchain.blockbook](https://github.com/trustwallet/ansible-collection-blockchain/tree/main/roles/blockbook) - Blockbook supported blockchains
 * [trustwallet.blockchain.cosmos](https://github.com/trustwallet/ansible-collection-blockchain/tree/main/roles/cosmos) - All Cosmos-SDK based blockchains
 * [trustwallet.blockchain.ethereum](https://github.com/trustwallet/ansible-collection-blockchain/tree/main/roles/ethereum) - Ethereum blockchain with Geth
+* [trustwallet.blockchain.nano](https://github.com/trustwallet/ansible-collection-blockchain/tree/main/roles/nano) - Nano blockchain
 * [trustwallet.blockchain.near](https://github.com/trustwallet/ansible-collection-blockchain/tree/main/roles/near) - NEAR blockchain
 * [trustwallet.blockchain.polygon](https://github.com/trustwallet/ansible-collection-blockchain/tree/main/roles/polygon) - Polygon blockchain
 * [trustwallet.blockchain.tron](https://github.com/trustwallet/ansible-collection-blockchain/tree/main/roles/tron) - TRON blockchain

@@ -1,0 +1,43 @@
+[Main]
+# URL of the Nano RPC node.
+NodeRpc = "{{ nano_node_rpc_url }}"
+
+# URL of the Nano Worker Server.
+# Can be the same as NodeRpc, or different.  Empty also means the same.
+# NOTE: Currently supports only single peer.
+NodeRpcWork = "{{ nano_work_server_peer }}"
+
+# Binding address of the service, ":7176" by default
+ListenIpPort = ":{{ nano_rpc_cache_port }}"
+
+# Cachefile name: if set, this file is used to persist the cache content.
+# Should be full or relative path.  If it is empty, persistence to file is not used.
+{% if nano_rpc_cache_filename | length > 0 %}
+CachePeristFileName = "{{ nano_rpc_cache_filename }}"
+{% else %}
+# CachePeristFileName = ".cache"
+{% endif %}
+
+# HTTP API Rate limit: max concurrent outstanding requests.  If reached, overload error messages are returned.
+# Background-running work requests are counted in here, they are limited differently
+RestMaxActiveRequests = {{ nano_rpc_cache_max_active_requests }}
+
+# BackgroundWorkerCount: number of background worker threads, and also maximum number of outgoing requests from pregenerations
+# Range: 2 - 20, default 4
+BackgroundWorkerCount = {{ nano_rpc_cache_worker_count }}
+
+# MaxOutRequests: number of concurrent outgoing work request (boisth from generation and pregeneration).
+# Range: 3 - 30 or 0, default 8, but must be at least 1 larger than BackgroundWorkerCount
+MaxOutRequests = {{ nano_rpc_cache_max_active_work_generation_requests }}
+
+# EnablePregeneration: enable pregeneration -- computing of work in advance when e.g. balance is retrieved
+# Range: 0 or 1, default 0
+EnablePregeneration = {{ 1 if nano_rpc_cache_pregeneration_enabled else 0 }}
+
+# PregenerationQueueSize: maximum size of queue for pregenerate requests
+# Range: 0 - 100000, default 1000
+PregenerationQueueSize = {{ nano_rpc_cache_pregeneration_queue_size }}
+
+# MaxCacheAgeDays: age limit on old cache entries for cache aging.  0 means no cache aging.
+# Dafault: 30 (days)
+MaxCacheAgeDays = {{ nano_rpc_cache_age_limit_in_days }}

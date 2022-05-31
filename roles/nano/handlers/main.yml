@@ -1,0 +1,9 @@
+---
+- name: "Restart {{ nano_rpc_cache_daemon_name }} service"
+  ansible.builtin.systemd:
+    name: "{{ nano_rpc_cache_daemon_name }}"
+    state: restarted
+    daemon_reload: true
+    enabled: true
+  listen: restart_nano_rpc_cache_service
+  become: true

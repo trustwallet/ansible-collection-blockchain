@@ -50,9 +50,9 @@ The role has default variables (see `defaults/main.yml`) which can be adjusted.
 
 ## Popular Questions
 
-### What ports does Polygon blockchain node use?
+### Port Configuration
 
-The sentry machine must have the following ports open:
+The machine must have the following ports open:
 
 * `26656` - Heimdall P2P port to connect the node to other nodes, should be open to the world `0.0.0.0/0`.
 

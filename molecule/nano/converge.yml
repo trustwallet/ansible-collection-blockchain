@@ -1,0 +1,8 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: "Include roles/nano"
+      ansible.builtin.include_role:
+        name: roles/nano
+      vars: {}

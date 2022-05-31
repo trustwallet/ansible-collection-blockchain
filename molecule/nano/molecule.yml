@@ -1,0 +1,49 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: ec2
+lint: |
+  set -e
+  yamllint .
+  ansible-lint .
+platforms:
+  - name: instance
+    image: ${MOLECULE_IMAGE}
+    instance_type: g2.2xlarge
+    vpc_subnet_id: ${MOLECULE_VPC_SUBNET_ID}
+    boot_wait_seconds: 10
+    tags:
+      Name: molecule-nano
+provisioner:
+  name: ansible
+verifier:
+  name: testinfra
+scenario:
+  name: nano
+  create_sequence:
+    - create
+    - prepare
+  check_sequence:
+    - destroy
+    - create
+    - prepare
+    - converge
+    - check
+    - destroy
+  converge_sequence:
+    - create
+    - prepare
+    - converge
+  destroy_sequence:
+    - destroy
+  test_sequence:
+    - lint
+    - destroy
+    - syntax
+    - create
+    - prepare
+    - converge
+    - idempotence
+    - verify
+    - destroy

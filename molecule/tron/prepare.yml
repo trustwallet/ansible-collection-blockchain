@@ -1,5 +1,5 @@
 ---
-- name: Prepare
+- name: "Prepare"
   hosts: all
   gather_facts: true
   become: true
@@ -8,7 +8,10 @@
     - name: "Make sure python3 is installed"
       ansible.builtin.package:
         update_cache: true
-        name: python3
+        cache_valid_time: 86400
+        name:
+          - python3
+          - python3-pip
 
   roles:
     - role: lean_delivery.java
