@@ -1,20 +1,20 @@
 ---
-name: Test NEAR role
+name: Test TRON role
 
 on:
   pull_request:
     branches:
       - main
     paths:
-      - roles/near/**
-      - molecule/near/**
+      - roles/tron/**
+      - molecule/tron/**
 
 permissions:
   id-token: write
   contents: read
 
 env:
-  MOLECULE_SCENARIO: near
+  MOLECULE_SCENARIO: tron
 
 jobs:
   ansible-galaxy:
@@ -40,12 +40,6 @@ jobs:
             ${{ runner.os }}-pip-
       - run: pip install -r requirements.txt
         if: steps.cache.outputs.cache-hit != 'true'
-
-      - uses: actions/cache@v2
-        id: cache-neard-bin
-        with:
-          path: /usr/local/bin/neard
-          key: ${{ runner.os }}-neard
 
       # role has dependency during testing with Molecule which is not resolved
       # for some reason --role-path specified during molecule run is not used during prepare play
