@@ -1,20 +1,20 @@
 ---
-name: Test TRON role
+name: Test Nano role
 
 on:
   pull_request:
     branches:
       - main
     paths:
-      - roles/tron/**
-      - molecule/tron/**
+      - roles/nano/**
+      - molecule/nano/**
 
 permissions:
   id-token: write
   contents: read
 
 env:
-  MOLECULE_SCENARIO: tron
+  MOLECULE_SCENARIO: nano
 
 jobs:
   ansible-galaxy:
