@@ -20,13 +20,14 @@ nano_node: true
 # <nano_node_rpc_url> is the Nano node RPC URL used by RPC Cache layer.
 nano_node_rpc_url: http://localhost:7076
 
+# <nano_node_rpc_enable_control> is an option to enable unsecure control of Nano RPC node,
+# but since before the Nano RPC there is a Nano RPC Cache (and only its port should be open),
+# it ignores unsafe action (e.g. shutdown).
+nano_node_rpc_enable_control: false
+
 # <nano_work_server_peers> are the Nano Work Server peer addresses, by default targeting same machine.
 nano_work_server_peers:
-  - http://localhost:7176
-
-# With current implementation of nano-rpc-cache
-# only a single work server peer is supported
-nano_work_server_peer: "{{ nano_work_server_peers[0] }}"
+  - localhost:7176
 
 # <nano_work_server> indicates the mahine is Nano Work Server performing the Prof of Work generation.
 nano_work_server: true
@@ -52,6 +53,10 @@ nano_rpc_cache: true
 nano_rpc_cache_git_repo: https://github.com/catenocrypt/nano-work-cache.git
 
 nano_rpc_cache_config_path: "{{ home_dir }}/nano-rpc-cache/config.toml"
+
+# With current implementation of nano-rpc-cache
+# only a single work server is supported
+nano_rpc_cache_work_server_url: "https://localhost:7176"
 
 # <nano_rpc_cache_bin> is name of the compiled binary
 nano_rpc_cache_bin: nano_rpc_cache

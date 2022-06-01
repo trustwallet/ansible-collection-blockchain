@@ -4,8 +4,8 @@ NodeRpc = "{{ nano_node_rpc_url }}"
 
 # URL of the Nano Worker Server.
 # Can be the same as NodeRpc, or different.  Empty also means the same.
-# NOTE: Currently supports only single peer.
-NodeRpcWork = "{{ nano_work_server_peer }}"
+# NOTE: Currently supports only single Work Server.
+NodeRpcWork = "{{ nano_rpc_cache_work_server_url }}"
 
 # Binding address of the service, ":7176" by default
 ListenIpPort = ":{{ nano_rpc_cache_port }}"
