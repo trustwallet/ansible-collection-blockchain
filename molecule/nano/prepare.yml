@@ -12,10 +12,13 @@
         name:
           - python3
           - python3-pip
-  
+
   roles:
     - role: geerlingguy.docker
-    
+
     - role: gantsign.golang
       golang_version: "1.18.1"
       golang_install_dir: /usr/local/go
+
+    - role: nvidia.nvidia_driver
+      nvidia_driver_branch: 470

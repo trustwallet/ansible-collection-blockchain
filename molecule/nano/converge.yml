@@ -1,8 +1,14 @@
 ---
 - name: Converge
   hosts: all
+  become: true
+
   tasks:
     - name: "Include roles/nano"
       ansible.builtin.include_role:
         name: roles/nano
-      vars: {}
+      vars:
+        nano_node: true
+        nano_rpc_cache: true
+        nano_work_server: true
+        # opencl_lib_path: "/usr/lib/x86_64-linux-gnu/libnvidia-opencl.so.1"

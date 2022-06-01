@@ -7,3 +7,12 @@
     enabled: true
   listen: restart_nano_rpc_cache_service
   become: true
+
+- name: "Restart {{ nano_work_server_daemon_name }} service"
+  ansible.builtin.systemd:
+    name: "{{ nano_work_server_daemon_name }}"
+    state: restarted
+    daemon_reload: true
+    enabled: true
+  listen: restart_nano_work_server_service
+  become: true

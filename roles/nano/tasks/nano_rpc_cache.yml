@@ -36,13 +36,13 @@
 - name: "Git checkout Nano RPC Cache repo"
   ansible.builtin.git:
     repo: "{{ nano_rpc_cache_git_repo }}"
-    dest: "/tmp/nano-rpc-cache"
+    dest: /tmp/nano-rpc-cache
     force: true
 
 - name: "Make Nano RPC Cache binary" # noqa no-changed-when
   ansible.builtin.shell:
     cmd: "{{ nano_rpc_cache_make_command }}"
-    chdir: "/tmp/nano-rpc-cache"
+    chdir: /tmp/nano-rpc-cache
   environment:
     PATH: "{{ golang_bin_dir }}:{{ ansible_env.PATH }}"
     GOBIN: "{{ bin_dir }}"
