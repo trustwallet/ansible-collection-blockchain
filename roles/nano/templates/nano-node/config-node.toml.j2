@@ -13,7 +13,7 @@ enable = true
 [node]
 work_peers = [
 {% for peer in nano_work_server_peers %}
-    {{ peer }}{{ ", " if not loop.last else "" }}
+    "{{ peer }}"{{ ", " if not loop.last else "" }}
 {% endfor %}
 ]
 work_threads = 0
