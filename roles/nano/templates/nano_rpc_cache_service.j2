@@ -1,0 +1,16 @@
+{{ ansible_managed | comment }}
+
+[Unit]
+Description=Nano RPC Cache Daemon
+After=network.target
+
+[Service]
+Type=simple
+User={{ username }}
+ExecStart={{ bin_dir }}/{{ nano_rpc_cache_bin }} {{ nano_rpc_cache_config_path }}
+Restart=on-failure
+RestartSec=3
+LimitNOFILE=4096
+
+[Install]
+WantedBy=multi-user.target

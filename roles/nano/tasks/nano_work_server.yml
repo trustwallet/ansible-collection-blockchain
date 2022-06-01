@@ -1,0 +1,65 @@
+---
+- name: "Get Nano work server binary version" # noqa no-changed-when
+  ansible.builtin.command:
+    cmd: "{{ nano_work_server_bin }} -V"
+    chdir: "{{ bin_dir }}"
+  failed_when: false
+  register: nano_work_server_version_result
+
+- name: "Create systemd service file"
+  ansible.builtin.template:
+    src: templates/nano_work_server_service.j2
+    dest: "/etc/systemd/system/{{ nano_work_server_daemon_name }}.service"
+    mode: "644"
+  notify: restart_nano_work_server_service
+  become: true
+
+- name: "Build Nano work server binary"
+  when: nano_work_server_version_result.stdout is not search(nano_work_server_version)
+  block:
+    - name: "Install Rust" # noqa command-instead-of-module
+      ansible.builtin.shell: "curl https://sh.rustup.rs -sSf | sh -s -- -y"
+      changed_when: false
+      become: true
+
+    - name: "Install apt packages"
+      ansible.builtin.apt:
+        pkg:
+          - ocl-icd-opencl-dev
+          - gcc
+      become: true
+
+    - name: "Git checkout"
+      ansible.builtin.git:
+        repo: "{{ nano_work_server_git_repo }}"
+        dest: /tmp/nano-work-server
+        version: "{{ nano_work_server_version }}"
+        force: true
+
+    - name: "Compile Nano work server binary" # noqa no-changed-when
+      ansible.builtin.shell:
+        cmd: source ~/.cargo/env && cargo build --release
+        chdir: /tmp/nano-work-server
+        executable: /bin/bash
+      changed_when: false
+      when: opencl_lib_path is not defined
+      become: true
+
+    - name: "Compile Nano work server binary (link OpenCL lib)" # noqa no-changed-when
+      ansible.builtin.shell:
+        cmd: "source ~/.cargo/env && cargo rustc --release -- -l OpenCL -L {{ opencl_lib_path }}"
+        chdir: /tmp/nano-work-server
+        executable: /bin/bash
+      changed_when: false
+      when: opencl_lib_path is defined
+      become: true
+
+    - name: "Copy compiled binary to bin folder"
+      ansible.builtin.copy:
+        src: /tmp/nano-work-server/target/release/nano-work-server
+        dest: "{{ bin_dir }}/{{ nano_work_server_bin }}"
+        owner: "{{ username }}"
+        mode: "775"
+        remote_src: true
+      notify: restart_nano_work_server_service
+      become: true

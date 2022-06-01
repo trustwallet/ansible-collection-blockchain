@@ -34,7 +34,7 @@ molecule -v test -s near
 
 * [Trust Wallet](https://trustwallet.com)
 * [NEAR GitHub](https://github.com/near/nearcore)
-* [NEAR Docs](https://docs.near.org/docs/develop/node/intro/what-is-a-node)
+* [NEAR Documentation](https://docs.near.org/docs/develop/node/intro/what-is-a-node)
 
 ## License
 

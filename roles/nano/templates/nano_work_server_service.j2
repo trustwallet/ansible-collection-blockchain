@@ -1,0 +1,16 @@
+{{ ansible_managed | comment }}
+
+[Unit]
+Description=Nano Work Server Daemon
+After=network.target
+
+[Service]
+Type=simple
+User={{ username }}
+ExecStart={{ bin_dir }}/{{ nano_work_server_bin }} --gpu 0:0 --listen-address {{ nano_work_server_listen_address }}
+Restart=on-failure
+RestartSec=3
+LimitNOFILE=4096
+
+[Install]
+WantedBy=multi-user.target

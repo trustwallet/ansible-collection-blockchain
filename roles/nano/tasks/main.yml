@@ -1,0 +1,8 @@
+---
+- include_tasks: install.yml
+- include_tasks: nano_node.yml
+  when: nano_node
+- include_tasks: nano_rpc_cache.yml
+  when: nano_rpc_cache
+- include_tasks: nano_work_server.yml
+  when: nano_work_server

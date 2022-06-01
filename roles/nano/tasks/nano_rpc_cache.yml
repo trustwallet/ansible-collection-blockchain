@@ -1,0 +1,50 @@
+---
+- name: "Ensures Nano RPC Cache config dir exists"
+  ansible.builtin.file:
+    path: "{{ nano_rpc_cache_config_path | dirname }}"
+    state: directory
+    owner: "{{ username }}"
+    mode: "774"
+  become: true
+
+- name: "Generate Nano RPC Cache config"
+  template:
+    src: templates/nano-rpc-cache/config.toml.j2
+    dest: "{{ nano_rpc_cache_config_path }}"
+    owner: "{{ username }}"
+  become: true
+
+- name: "Create systemd service file"
+  ansible.builtin.template:
+    src: templates/nano_rpc_cache_service.j2
+    dest: "/etc/systemd/system/{{ nano_rpc_cache_daemon_name }}.service"
+    mode: "644"
+  become: true
+
+- name: "Stop service (if running)"
+  ansible.builtin.systemd:
+    name: "{{ nano_rpc_cache_daemon_name }}"
+    state: stopped
+  become: true
+
+- name: "Remove previous binary"
+  ansible.builtin.file:
+    dest: "{{ bin_dir }}/{{ nano_rpc_cache_bin }}"
+    state: absent
+  become: true
+
+- name: "Git checkout Nano RPC Cache repo"
+  ansible.builtin.git:
+    repo: "{{ nano_rpc_cache_git_repo }}"
+    dest: /tmp/nano-rpc-cache
+    force: true
+
+- name: "Make Nano RPC Cache binary" # noqa no-changed-when
+  ansible.builtin.shell:
+    cmd: "{{ nano_rpc_cache_make_command }}"
+    chdir: /tmp/nano-rpc-cache
+  environment:
+    PATH: "{{ golang_bin_dir }}:{{ ansible_env.PATH }}"
+    GOBIN: "{{ bin_dir }}"
+  notify: restart_nano_rpc_cache_service
+  become: true
