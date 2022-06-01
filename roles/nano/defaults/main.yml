@@ -34,7 +34,7 @@ nano_work_server: true
 # <nano_work_server_version> is the Nano work server version
 nano_work_server_version: V0.3.0
 
-nano_work_server_listen_address: "[::1]:7176"
+nano_work_server_listen_address: "[::0]:7176"
 
 nano_work_server_git_repo: https://github.com/nanocurrency/nano-work-server.git
 
