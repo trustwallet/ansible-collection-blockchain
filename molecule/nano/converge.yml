@@ -9,6 +9,7 @@
         name: roles/nano
       vars:
         nano_node: true
+        nano_node_rpc_enable_control: true
         nano_rpc_cache: true
         nano_work_server: true
         # opencl_lib_path: "/usr/lib/x86_64-linux-gnu/libnvidia-opencl.so.1"

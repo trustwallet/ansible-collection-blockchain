@@ -1,0 +1,20 @@
+[node.websocket]
+
+# WebSocket server bind address
+# type:string,ip
+address = "::ffff:0.0.0.0"
+
+[rpc]
+
+# Enable or disable RPC
+# type:bool
+enable = true
+
+[node]
+work_peers = [
+{% for peer in nano_work_server_peers %}
+    "{{ peer }}"{{ ", " if not loop.last else "" }}
+{% endfor %}
+]
+work_threads = 0
+use_peers = true

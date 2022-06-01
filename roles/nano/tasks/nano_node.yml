@@ -11,7 +11,7 @@
 
 - name: "Create host directory"
   ansible.builtin.file:
-    path: "{{ data_dir }}"
+    path: "{{ data_dir }}/Nano"
     state: directory
     mode: "775"
     owner: "{{ username }}"
@@ -24,6 +24,17 @@
       type: none
       o: bind
       device: "{{ data_dir }}"
+  become: true
+
+- name: "Generate Nano configs"
+  ansible.builtin.template:
+    src: "templates/nano-node/{{ item }}"
+    dest: "{{ data_dir }}/Nano/{{ item | replace('.j2', '') }}"
+    mode: "775"
+    owner: "{{ username }}"
+  loop:
+    - config-node.toml.j2
+    - config-rpc.toml.j2
   become: true
 
 - name: "Check docker-compose.yml exists"
