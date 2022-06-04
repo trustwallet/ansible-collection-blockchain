@@ -11,6 +11,7 @@
   ansible.builtin.stat:
     path: "{{ data_dir }}/output-directory"
   register: tron_data_stat
+  become: true
 
 - name: "Download chain data"
   when:
