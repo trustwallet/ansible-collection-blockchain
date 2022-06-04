@@ -7,6 +7,5 @@
       ansible.builtin.include_role:
         name: roles/tron
       vars:
-        #ansible_become: true
         quicksync_enabled: false
         tron_config_override: ./config/main_net_config.conf
