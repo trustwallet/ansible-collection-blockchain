@@ -1,13 +1,15 @@
 ---
 - name: "Install apt packages"
   ansible.builtin.apt:
-    pkg: libgoogle-perftools4
     update_cache: true
     cache_valid_time: 86400
+    pkg: libgoogle-perftools4
+  become: true
 
 - name: "Create user {{ username }}"
   ansible.builtin.user:
     name: "{{ username }}"
+  become: true
 
 - name: "Calculate heap size"
   set_fact:
@@ -19,6 +21,7 @@
     dest: "/etc/systemd/system/{{ tron_daemon_name }}.service"
     mode: "644"
   notify: restart_service
+  become: true
 
 - name: "Ensure creation of data dir"
   ansible.builtin.file:
@@ -26,6 +29,7 @@
     state: directory
     owner: "{{ username }}"
     mode: "774"
+  become: true
 
 - name: "Download FullNode.jar"
   ansible.builtin.get_url:
@@ -36,3 +40,4 @@
     owner: "{{ username }}"
     mode: "755"
   notify: restart_service
+  become: true

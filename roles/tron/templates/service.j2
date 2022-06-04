@@ -8,7 +8,7 @@ After=network.target
 Type=simple
 User={{ username }}
 WorkingDirectory={{ data_dir }}
-ExecStart=java -Xmx{{ tron_heap_size }}g -XX:+UseConcMarkSweepGC -jar {{ tron_jar }} -c main_net_config.conf
+ExecStart=java -Xmx{{ tron_heap_size }}g -XX:+UseConcMarkSweepGC -jar {{ tron_jar }} -c main_net_config.conf -Dfastjson.parser.safeMode=true
 Restart=on-failure
 RestartSec=3
 LimitNOFILE=65535
