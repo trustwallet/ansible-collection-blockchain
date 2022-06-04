@@ -6,3 +6,4 @@
     daemon_reload: true
     enabled: true
   listen: restart_service
+  become: true
