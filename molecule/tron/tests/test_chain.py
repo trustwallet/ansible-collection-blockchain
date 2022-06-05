@@ -12,3 +12,11 @@ def test_neard_running_and_enabled(host):
 def test_http_is_listening(host):
     s = host.socket("tcp://0.0.0.0:8090")
     assert s.is_listening
+
+def test_p2p_tcp_is_listening(host):
+    s = host.socket("tcp://0.0.0.0:18888")
+    assert s.is_listening
+
+def test_p2p_udp_is_listening(host):
+    s = host.socket("udp://0.0.0.0:18888")
+    assert s.is_listening
