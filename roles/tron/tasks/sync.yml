@@ -5,11 +5,13 @@
     update_cache: true
     cache_valid_time: 86400
     pkg: acl
+  become: true
 
 - name: "Check TRON data directory was initialised"
   ansible.builtin.stat:
     path: "{{ data_dir }}/output-directory"
   register: tron_data_stat
+  become: true
 
 - name: "Download chain data"
   when:
@@ -18,9 +20,8 @@
   block:
     - name: "Install apt packages"
       ansible.builtin.apt:
-        update_cache: true
-        cache_valid_time: 86400
         pkg: aria2
+      become: true
 
     - name: "Get download target" # noqa command-instead-of-module
       ansible.builtin.command:
@@ -69,12 +70,14 @@
       ansible.builtin.systemd:
         name: "{{ tron_daemon_name }}"
         state: stopped
+      become: true
 
     - name: "Delete inner data dir"
       ansible.builtin.file:
         path: "{{ data_dir }}/output-directory"
         state: absent
       notify: restart_service
+      become: true
 
     - name: "Extract chain data" # noqa command-instead-of-module
       ansible.builtin.command:
