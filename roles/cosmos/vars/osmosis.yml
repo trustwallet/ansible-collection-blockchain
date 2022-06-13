@@ -3,4 +3,4 @@ chain_minimum_gas_prices: "0.001uosmo"
 chain_addrbook_url: https://quicksync.io/addrbook.osmosis.json
 quicksync_available: true
 chain_version: v10.0.0
-chain_bin_url: https://github.com/osmosis-labs/osmosis/releases/download/v10.0.0/osmosisd-10.0.0-linux-amd64
+chain_bin_url: https://github.com/osmosis-labs/osmosis/releases/download/v10.0.0/osmosis-10.0.0-linux-amd64
