@@ -3,6 +3,8 @@
 # Requred to be set in role vars.
 chain_name: ""
 
+blockbook_chain_repo: https://github.com/trezor/blockbook
+
 blockbook_checkout_dir: "/tmp/blockbook"
 
 base_dir: "/opt/coins"
