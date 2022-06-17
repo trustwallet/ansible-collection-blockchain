@@ -9,7 +9,6 @@
   ansible.builtin.git:
     repo: "{{ blockbook_git_repo }}"
     dest: "{{ blockbook_checkout_dir }}"
-    version: "{{ blockbook_version }}"
     force: true
 
 - name: "Override blockbook config"
