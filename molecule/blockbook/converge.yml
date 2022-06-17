@@ -10,3 +10,4 @@
         name: roles/blockbook
       vars:
         chain_name: "{{ lookup('env', 'BLOCKBOOK_CHAIN_NAME') }}"
+        blockbook_git_repo: https://github.com/vorotech/blockbook
