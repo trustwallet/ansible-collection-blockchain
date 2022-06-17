@@ -32,3 +32,10 @@ jobs:
 
       - name: Publish Ansible Galaxy collection
         run: ansible-galaxy collection publish --api-key ${{ secrets.GALAXY_API_KEY }} trustwallet-blockchain-*.tar.gz
+
+      - name: Push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.0
+        with:
+          custom_tag: ${{ steps.build.outputs.collection-version }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
