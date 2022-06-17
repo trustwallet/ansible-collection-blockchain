@@ -5,6 +5,8 @@ chain_name: ""
 
 blockbook_git_repo: https://github.com/trezor/blockbook
 
+blockbook_git_version: master
+
 blockbook_checkout_dir: "/tmp/blockbook"
 
 base_dir: "/opt/coins"
