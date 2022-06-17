@@ -5,6 +5,10 @@
     cache_valid_time: 86400
     pkg: make
 
+- name: "Git checkout repo"
+  debug:
+    msg: "Git checkout repo: {{ blockbook_git_repo }}"
+
 - name: "Git checkout"
   ansible.builtin.git:
     repo: "{{ blockbook_git_repo }}"
