@@ -6,7 +6,7 @@ username: tron
 home_dir: "/home/{{ username }}"
 
 # <tron_version> is the tron binary version
-tron_version: 4.4.6
+tron_version: 4.5.1
 
 # <tron_jar_url> is the URL to download TRON FullNode.jar
 tron_jar_url: "https://github.com/tronprotocol/java-tron/releases/download/GreatVoyage-v{{ tron_version }}/FullNode.jar"
