@@ -3,6 +3,7 @@ roles:
   - name: gantsign.golang
   - name: geerlingguy.docker
   - name: lean_delivery.java
+  - name: telusdigital.unattended-upgrades
   - name: nvidia.nvidia_driver
 collections:
   - name: amazon.aws
