@@ -14,6 +14,8 @@
           - python3-pip
 
   roles:
+    - role: telusdigital.unattended-upgrades
+
     - role: lean_delivery.java
       java_distribution: corretto
       java_major_version: 8
