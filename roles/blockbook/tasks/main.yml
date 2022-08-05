@@ -54,7 +54,7 @@
 
 - name: "Install {{ chain_name }} backend package"
   ansible.builtin.shell:
-    cmd: "apt install ./backend-{{ chain_name }}_{{ backend_vars.backend.version }}-{{ backend_vars.backend.package_revision }}_amd64.deb -y"
+    cmd: "apt install ./backend-{{ chain_name }}_{{ backend_vars.backend.version }}-{{ backend_vars.backend.package_revision }}_amd64.deb -y --allow-downgrades"
     chdir: "{{ blockbook_checkout_dir }}/build"
   changed_when: make_packages.changed
 
