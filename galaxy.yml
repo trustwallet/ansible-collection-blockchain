@@ -1,7 +1,7 @@
 ---
 namespace: trustwallet
 name: blockchain
-version: 0.5.14
+version: 0.5.15
 readme: README.md
 authors:
   - vorotech
