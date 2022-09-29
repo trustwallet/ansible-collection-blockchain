@@ -6,7 +6,7 @@ username: near
 home_dir: "/home/{{ username }}"
 
 # <near_version> is the near binary version. When doesn't match, will rebuild binary from sources.
-near_version: 1.28.0
+near_version: 1.29.0
 
 # <near_bin> is the chain executable
 near_bin: /usr/local/bin/neard
