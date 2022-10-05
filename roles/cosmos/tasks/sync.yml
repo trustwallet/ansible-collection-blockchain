@@ -11,7 +11,7 @@
 - name: "Get download target" # noqa command-instead-of-module
   ansible.builtin.shell:
     cmd: >
-      curl https://quicksync.io/{{ chain_name }}.json
+      curl -L https://quicksync.io/{{ chain_name }}.json
       | jq -r '.[]|select(.file=="{{ chain_id }}-{{ quicksync_mode }}")|select (.mirror=="{{ quicksync_mirror }}")'
   changed_when: false
   register: quicksync_target_result
