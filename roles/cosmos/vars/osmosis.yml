@@ -2,4 +2,4 @@
 chain_addrbook_url: https://quicksync.io/addrbook.osmosis.json
 quicksync_available: true
 chain_version: v12.3.0
-chain_bin_url: https://github.com/osmosis-labs/osmosis/releases/download/v12.3.0/osmosisd-12.3.0-linux-arm64
+chain_bin_url: https://github.com/osmosis-labs/osmosis/releases/download/v12.3.0/osmosisd-12.3.0-linux-amd64
