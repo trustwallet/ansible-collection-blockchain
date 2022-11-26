@@ -100,3 +100,6 @@ nano_rpc_cache_age_limit_in_days: 30
 # <golang_bin_dir> is the location of the golang bin folder which will be added
 # to the $PATH.
 golang_bin_dir: /usr/local/go/bin
+
+# <rust_version> is the Rust toolchain version
+rust_version: 1.63.0
