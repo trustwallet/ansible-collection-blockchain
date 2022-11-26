@@ -36,6 +36,13 @@
         version: "{{ nano_work_server_version }}"
         force: true
 
+    - name: "Ensure Rust toolchain version"
+      ansible.builtin.shell:
+        cmd: "source ~/.cargo/env && rustup default {{ rust_version }}"
+        executable: /bin/bash
+      changed_when: false
+      become: true
+
     - name: "Compile Nano work server binary" # noqa no-changed-when
       ansible.builtin.shell:
         cmd: source ~/.cargo/env && cargo build --release
