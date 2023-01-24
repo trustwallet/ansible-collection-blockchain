@@ -1,7 +1,7 @@
 ansible-compat==1.0.0
 ansible-core==2.12.1
 ansible-lint==5.3.2
-ansible==5.2.0
+ansible==7.0.0
 boto3==1.20.38
 botocore==1.23.38
 flake8==4.0.1
