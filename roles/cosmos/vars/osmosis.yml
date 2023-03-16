@@ -1,5 +1,5 @@
 ---
 chain_addrbook_url: https://quicksync.io/addrbook.osmosis.json
 quicksync_available: true
-chain_version: v14.0.0
-chain_bin_url: https://github.com/osmosis-labs/osmosis/releases/download/v14.0.0/osmosisd-14.0.0-linux-amd64
+chain_version: v15.0.0
+chain_bin_url: https://github.com/osmosis-labs/osmosis/releases/download/v15.0.0/osmosisd-15.0.0-linux-amd64
